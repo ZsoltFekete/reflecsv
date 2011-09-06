@@ -22,18 +22,4 @@ public class Split {
   res.add(sb.toString());
   return res;
   } 
-
-  public static void main(String[] args) {
-    String input = "asd,qwe,f,,g";
-    char sep = ',';
-    if (2 == args.length) {
-      input = args[0];
-      sep = args[1].charAt(0);
-    }
-    ArrayList<String> list1 = Split.split(input, sep);
-    for (String s : list1) {
-      System.out.println(s);
-    }
-  }
-
 }

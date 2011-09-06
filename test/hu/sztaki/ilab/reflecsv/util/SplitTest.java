@@ -29,21 +29,21 @@ public class SplitTest extends TestCase {
   }
 
   public void testEmpytString() {
-    ArrayList<String> result = Split.split("",'|');
+    ArrayList<String> result = Split.split("", '|');
     assertNotNull(result); 
     assertEquals(1, result.size());
     assertEquals("", result.get(0));
   }
 
   public void testNotContains() {
-    ArrayList<String> result = Split.split("test",'|');
+    ArrayList<String> result = Split.split("test", '|');
     assertNotNull(result); 
     assertEquals(1, result.size());
     assertEquals("test", result.get(0));
   }
 
   public void testContainsOnce() {
-    ArrayList<String> result = Split.split("test|example",'|');
+    ArrayList<String> result = Split.split("test|example", '|');
     assertNotNull(result); 
     assertEquals(2, result.size());
     assertEquals("test", result.get(0));
@@ -51,7 +51,7 @@ public class SplitTest extends TestCase {
   }
 
   public void testContainsTwice() {
-    ArrayList<String> result = Split.split("test|example|qwe",'|');
+    ArrayList<String> result = Split.split("test|example|qwe", '|');
     assertNotNull(result); 
     assertEquals(3, result.size());
     assertEquals("test", result.get(0));
@@ -60,12 +60,26 @@ public class SplitTest extends TestCase {
   }
 
   public void testContainsTwiceWithEmptyString() {
-    ArrayList<String> result = Split.split("test||qwe",'|');
+    ArrayList<String> result = Split.split("test||qwe", '|');
     assertNotNull(result); 
     assertEquals(3, result.size());
     assertEquals("test", result.get(0));
     assertEquals("", result.get(1));
     assertEquals("qwe", result.get(2));
+  }
+
+  public void testLongerString() {
+    String input = ",asd,qwe,f,,g,";
+    ArrayList<String> result = Split.split(input, ',');
+    assertNotNull(result); 
+    assertEquals(7, result.size());
+    assertEquals("", result.get(0));
+    assertEquals("asd", result.get(1));
+    assertEquals("qwe", result.get(2));
+    assertEquals("f", result.get(3));
+    assertEquals("", result.get(4));
+    assertEquals("g", result.get(5));
+    assertEquals("", result.get(6));
   }
 
   public static Test suite() {
