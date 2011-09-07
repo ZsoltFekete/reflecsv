@@ -322,6 +322,54 @@ public class CsvReaderTest extends TestCase {
 
   }
 
+  public void testNotCompleteRecord() {
+    String inputString =
+    "field1,field_qwe,field2,field4\n" +
+      "11,qwe,s2,3.4\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+
+    int counter = 0;
+    csvReader.start();
+    csvReader.next();
+    assertEquals(11, record1.field1);
+    assertEquals("s2", record1.field2);
+  }
+
+  public static class LongRecord {
+    public String field2;
+    public String field5;
+    public String field6;
+    public String field8;
+    public String field10;
+    public String field11;
+  }
+
+  public void testLongNotCompleteRecord() {
+    String inputString =
+    "field1,field2,field3,field4,field5,field6,field7,field8," +
+    "field9,field10,field11,field12,field13,field14\n" +
+      "1,2,3,4,5,6,7,8,9,10,11,12,13,14\n" +
+      "1,2,3,4,5,6,7,8,9,10,11,12,13,14\n" +
+      "1,2,3,4,5,6,7,8,9,10,11,12,13,14\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    LongRecord record = (LongRecord) csvReader.registerClass(LongRecord.class);
+
+    int counter = 0;
+    csvReader.start();
+    csvReader.next();
+    csvReader.next();
+    csvReader.next();
+    assertEquals("2", record.field2);
+    assertEquals("5", record.field5);
+    assertEquals("6", record.field6);
+    assertEquals("8", record.field8);
+    assertEquals("10", record.field10);
+    assertEquals("11", record.field11);
+  }
+
   public static Test suite() {
     return new TestSuite(CsvReaderTest.class);
   }

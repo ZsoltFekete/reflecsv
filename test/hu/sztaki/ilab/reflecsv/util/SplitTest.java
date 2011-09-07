@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SplitTest extends TestCase {
 
@@ -87,6 +88,34 @@ public class SplitTest extends TestCase {
     assertEquals("", result.get(4));
     assertEquals("g", result.get(5));
     assertEquals("", result.get(6));
+  }
+
+  public void testRequiredSplitNull() {
+    try {
+      ArrayList<String> result = Split.splitReqiredFields("", ',', null);
+      fail("Theres was no exception thrown.");
+    } catch (RuntimeException e) {}
+  }
+
+  public void testRequiredSplitEmptyList() {
+    List<String> result = Split.splitReqiredFields("", ',',
+        new ArrayList<Integer>());
+    assertEquals(0, result.size());
+  }
+
+  public void testRequiredSplitNonEmptyList() {
+    List<Integer> required = new ArrayList<Integer>();
+    required.add(1);
+    required.add(4);
+    required.add(5);
+    required.add(8);
+    String input = "00,11,22,33,44,55,66,77,88,99,1010";
+    List<String> result = Split.splitReqiredFields(input, ',', required);
+    assertEquals(4, result.size());
+    assertEquals("11", result.get(0));
+    assertEquals("44", result.get(1));
+    assertEquals("55", result.get(2));
+    assertEquals("88", result.get(3));
   }
 
   public static Test suite() {

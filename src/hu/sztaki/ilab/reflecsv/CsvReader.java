@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class CsvReader {
 
@@ -34,7 +36,8 @@ public class CsvReader {
 
   private static class FieldDescriptor {
     public Field field;
-    public int index;
+    public int originalIndex;
+    public int newIndex;
     public FieldHandler handler;
   }
 
@@ -146,6 +149,8 @@ public class CsvReader {
     readNextLine();
   }
 
+  private List<Integer> sortedIndexList = new ArrayList<Integer>();
+
   private void matchRecordsWithHeader() {
     readNextLine();
     headerString = line;
@@ -157,6 +162,29 @@ public class CsvReader {
     for (Object recordObject : recordObjects) {
       ObjectDescriptor objectDescriptor = createObjectDescriptor(recordObject);
       objectDesciptors.add(objectDescriptor);
+    }
+    SortedSet<Integer> sortedIndices = new TreeSet<Integer>();
+    collectAllIndices(sortedIndices);
+    int counter = 0;
+    Map<Integer, Integer> originalToNewIndex = new HashMap<Integer, Integer>();
+    for (Integer index : sortedIndices) {
+      originalToNewIndex.put(index, counter);
+      sortedIndexList.add(index);
+      ++counter;
+    }
+    for (ObjectDescriptor objectDescriptor : objectDesciptors) {
+      for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
+        fieldDescriptor.newIndex =
+          originalToNewIndex.get(fieldDescriptor.originalIndex);
+      }
+    }
+  }
+
+  private void collectAllIndices(SortedSet<Integer> sortedIndices) {
+    for (ObjectDescriptor objectDescriptor : objectDesciptors) {
+      for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
+        sortedIndices.add(fieldDescriptor.originalIndex);
+      }
     }
   }
 
@@ -205,8 +233,8 @@ public class CsvReader {
   }
 
   private FieldDescriptor createFieldDescriptor(Field field) {
-    int index = findInHeader(field.getName());
-    if (-1 == index) {
+    int originalIndex = findInHeader(field.getName());
+    if (-1 == originalIndex) {
       throw new RuntimeException("Field \"" + field.getName() +
           "\" was not found in header. The header was:\n" +
           headerString);
@@ -214,7 +242,7 @@ public class CsvReader {
     FieldDescriptor fieldDescriptor = new FieldDescriptor();
     field.setAccessible(true);
     fieldDescriptor.field = field;
-    fieldDescriptor.index = index;
+    fieldDescriptor.originalIndex = originalIndex;
     FieldHandler fieldHandler = createFieldHandler(field.getType());
     fieldDescriptor.handler = fieldHandler;
     return fieldDescriptor;
@@ -251,7 +279,8 @@ public class CsvReader {
   }
 
   public void next() {
-    ArrayList<String> splittedLine = Split.split(line, separator);
+    ArrayList<String> splittedLine = Split.splitReqiredFields(line, separator,
+        sortedIndexList);
     for (int i = 0; i < recordObjects.size(); ++i) {
       Object recordObject = recordObjects.get(i);
       ObjectDescriptor objectDescriptor = objectDesciptors.get(i);
@@ -269,9 +298,9 @@ public class CsvReader {
 
   private void fillField(Object obj, FieldDescriptor fieldDescriptor,
       List<String> splittedLine) {
-    int index = fieldDescriptor.index;
+    int newIndex = fieldDescriptor.newIndex;
     Field field = fieldDescriptor.field;
-    String value = splittedLine.get(index);
+    String value = splittedLine.get(newIndex);
     FieldHandler fieldHandler = fieldDescriptor.handler;
     fieldHandler.fillField(field, obj, value);
   }
