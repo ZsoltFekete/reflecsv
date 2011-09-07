@@ -150,6 +150,7 @@ public class CsvReader {
   }
 
   private List<Integer> sortedIndexList = new ArrayList<Integer>();
+  private int[] sortedIndexArray;
 
   private void matchRecordsWithHeader() {
     readNextLine();
@@ -171,6 +172,10 @@ public class CsvReader {
       originalToNewIndex.put(index, counter);
       sortedIndexList.add(index);
       ++counter;
+    }
+    sortedIndexArray = new int[sortedIndexList.size()];
+    for (int i = 0 ; i < sortedIndexList.size(); ++i) {
+      sortedIndexArray[i] = sortedIndexList.get(i);
     }
     for (ObjectDescriptor objectDescriptor : objectDesciptors) {
       for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
@@ -279,8 +284,8 @@ public class CsvReader {
   }
 
   public void next() {
-    ArrayList<String> splittedLine = Split.splitReqiredFields(line, separator,
-        sortedIndexList);
+    String[] splittedLine = Split.splitReqiredFields(line, separator,
+        sortedIndexArray);
     for (int i = 0; i < recordObjects.size(); ++i) {
       Object recordObject = recordObjects.get(i);
       ObjectDescriptor objectDescriptor = objectDesciptors.get(i);
@@ -290,17 +295,17 @@ public class CsvReader {
   }
 
   private void fillRecord(Object recordObject, ObjectDescriptor objectDescriptor,
-      List<String> splittedLine) {
+      String[] splittedLine) {
     for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
       fillField(recordObject, fieldDescriptor, splittedLine);
     }
   }
 
   private void fillField(Object obj, FieldDescriptor fieldDescriptor,
-      List<String> splittedLine) {
+      String[] splittedLine) {
     int newIndex = fieldDescriptor.newIndex;
     Field field = fieldDescriptor.field;
-    String value = splittedLine.get(newIndex);
+    String value = splittedLine[newIndex];
     FieldHandler fieldHandler = fieldDescriptor.handler;
     fieldHandler.fillField(field, obj, value);
   }

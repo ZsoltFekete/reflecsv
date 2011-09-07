@@ -92,55 +92,55 @@ public class SplitTest extends TestCase {
 
   public void testRequiredSplitNull() {
     try {
-      ArrayList<String> result = Split.splitReqiredFields("", ',', null);
+      String[] result = Split.splitReqiredFields("", ',', null);
       fail("Theres was no exception thrown.");
     } catch (RuntimeException e) {}
   }
 
   public void testRequiredSplitEmptyList() {
-    List<String> result = Split.splitReqiredFields("", ',',
-        new ArrayList<Integer>());
-    assertEquals(0, result.size());
+    String[] result = Split.splitReqiredFields("", ',',
+        new int[0]);
+    assertEquals(0, result.length);
   }
 
   public void testRequiredSplitNonEmptyList() {
-    List<Integer> required = new ArrayList<Integer>();
-    required.add(1);
-    required.add(4);
-    required.add(5);
-    required.add(8);
+    int[] required = new int[] {1, 4, 5, 8};
+//    required.add(1);
+//    required.add(4);
+//    required.add(5);
+//    required.add(8);
     String input = "00,11,22,33,44,55,66,77,88,99,1010";
-    List<String> result = Split.splitReqiredFields(input, ',', required);
-    assertEquals(4, result.size());
-    assertEquals("11", result.get(0));
-    assertEquals("44", result.get(1));
-    assertEquals("55", result.get(2));
-    assertEquals("88", result.get(3));
+    String[] result = Split.splitReqiredFields(input, ',', required);
+    assertEquals(4, result.length);
+    assertEquals("11", result[0]);
+    assertEquals("44", result[1]);
+    assertEquals("55", result[2]);
+    assertEquals("88", result[3]);
   }
 
   public void testRequiredSplitLastElement() {
-    List<Integer> required = new ArrayList<Integer>();
-    required.add(1);
-    required.add(4);
-    required.add(5);
-    required.add(8);
+    int[] required = new int[] {1, 4, 5, 8};
+//    required.add(1);
+//    required.add(4);
+//    required.add(5);
+//    required.add(8);
     String input = "00,11,22,33,44,55,66,77,88";
-    List<String> result = Split.splitReqiredFields(input, ',', required);
-    assertEquals(4, result.size());
-    assertEquals("11", result.get(0));
-    assertEquals("44", result.get(1));
-    assertEquals("55", result.get(2));
-    assertEquals("88", result.get(3));
+    String[] result = Split.splitReqiredFields(input, ',', required);
+    assertEquals(4, result.length);
+    assertEquals("11", result[0]);
+    assertEquals("44", result[1]);
+    assertEquals("55", result[2]);
+    assertEquals("88", result[3]);
   }
 
   public void testRequiredSplitNonIncreasing() {
-    List<Integer> required = new ArrayList<Integer>();
-    required.add(1);
-    required.add(4);
-    required.add(3);
+    int[] required = new int[]{1, 4, 3};
+//    required.add(1);
+//    required.add(4);
+//    required.add(3);
     String input = "00,11,22,33,44,55,66,77,88";
     try {
-      List<String> result = Split.splitReqiredFields(input, ',', required);
+      String[] result = Split.splitReqiredFields(input, ',', required);
       fail("There was no exception.");
     } catch (RuntimeException e) {}
   }

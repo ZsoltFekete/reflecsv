@@ -29,8 +29,8 @@ public class Split {
     return res;
   }
 
- public static ArrayList<String> splitReqiredFields(String s, char separator,
-     List<Integer> requiredFields) {
+ public static String[] splitReqiredFields(String s, char separator,
+     int[] requiredFields) {
     if (null == requiredFields) {
       throw new RuntimeException("splitReqiredFields: requiredFields" +
           " list is null");
@@ -40,27 +40,27 @@ public class Split {
       throw new RuntimeException("Split: String is null.");
     }
 
-    ArrayList<String> res = new ArrayList<String>();
-    if (0 == requiredFields.size()) {
+    String[] res = new String[requiredFields.length];
+    if (0 == requiredFields.length) {
       return res;
     }
 
     int actualFieldNum = 0;
     int actualRequiredListIndex = 0;
-    int actualRequiredFieldIndex = requiredFields.get(0);
+    int actualRequiredFieldIndex = requiredFields[0];
     int beginIndex = 0;
     int stringLength = s.length();
-    int numberOfRequiredField = requiredFields.size();
+    int numberOfRequiredField = requiredFields.length;
     for (int i = 0; i < stringLength; i++) {
       if (s.charAt(i) == separator) {
          if (actualFieldNum == actualRequiredFieldIndex) {
-          res.add(s.substring(beginIndex, i));
+          res[actualRequiredListIndex] = s.substring(beginIndex, i);
           ++actualRequiredListIndex;
           if (actualRequiredListIndex >= numberOfRequiredField) {
             return res;
           }
           actualRequiredFieldIndex =
-            requiredFields.get(actualRequiredListIndex);
+            requiredFields[actualRequiredListIndex];
         }
         ++actualFieldNum;
         if (actualFieldNum == actualRequiredFieldIndex) {
@@ -69,7 +69,7 @@ public class Split {
       }
     }
     if (actualFieldNum == actualRequiredFieldIndex) {
-      res.add(s.substring(beginIndex, stringLength));
+      res[actualRequiredListIndex] = s.substring(beginIndex, stringLength);
       return res;
     } else {
       throw new RuntimeException("Internal inconsistency. " +
