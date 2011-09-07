@@ -233,6 +233,95 @@ public class CsvReaderTest extends TestCase {
     assertEquals("otherother", record3.field2.s);
   }
 
+  static class Record {
+    int int_;
+    byte byte_;
+    char char_;
+    double double_;
+    float float_;
+    boolean boolean_;
+    long long_;
+    short short_;
+  }
+
+  public void testOwnPrimitiveHandlers() {
+    String inputString =
+      "int_,byte_,char_,double_,float_,boolean_,long_,short_\n" +
+      "1,2,3,4,5,6,7,8\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    Record record = (Record) csvReader.registerClass(Record.class);
+
+    class MyIntHandler implements IntHandler {
+      public int convert(String s) {
+        return 123;
+      }
+    }
+
+    class MyDoubleHandler implements DoubleHandler {
+      public double convert(String s) {
+        return 3.45;
+      }
+    }
+
+    class MyBooleanHandler implements BooleanHandler {
+      public boolean convert(String s) {
+        return true;
+      }
+    }
+
+    class MyCharHandler implements CharHandler {
+      public char convert(String s) {
+        return 'q';
+      }
+    }
+
+    class MyFloatHandler implements FloatHandler {
+      public float convert(String s) {
+        return 3.78f;
+      }
+    }
+
+    class MyLongHandler implements LongHandler {
+      public long convert(String s) {
+        return 567;
+      }
+    }
+
+    class MyShortHandler implements ShortHandler {
+      public short convert(String s) {
+        return 23;
+      }
+    }
+
+    class MyByteHandler implements ByteHandler {
+      public byte convert(String s) {
+        return 114;
+      }
+    }
+
+    csvReader.setIntHandler(new MyIntHandler());
+    csvReader.setDoubleHandler(new MyDoubleHandler());
+    csvReader.setBooleanHandler(new MyBooleanHandler());
+    csvReader.setByteHandler(new MyByteHandler());
+    csvReader.setFloatHandler(new MyFloatHandler());
+    csvReader.setLongHandler(new MyLongHandler());
+    csvReader.setShortHandler(new MyShortHandler());
+    csvReader.setCharHandler(new MyCharHandler());
+
+    csvReader.start();
+    csvReader.next();
+    assertEquals(123, record.int_);
+    assertEquals(114, record.byte_);
+    assertEquals('q', record.char_);
+    assertEquals(3.45, record.double_);
+    assertEquals(3.78f, record.float_);
+    assertEquals(true, record.boolean_);
+    assertEquals(567, record.long_);
+    assertEquals(23, record.short_);
+
+  }
+
   public static Test suite() {
     return new TestSuite(CsvReaderTest.class);
   }

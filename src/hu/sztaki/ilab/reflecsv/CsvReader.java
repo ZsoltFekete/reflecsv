@@ -79,6 +79,62 @@ public class CsvReader {
     return null;
   }
 
+  private IntHandler intHandler =
+    new DefaultPrimitiveHandlers.DefaultIntHandler();
+
+  private DoubleHandler doubleHandler =
+    new DefaultPrimitiveHandlers.DefaultDoubleHandler();
+
+  private BooleanHandler booleanHandler =
+    new DefaultPrimitiveHandlers.DefaultBooleanHandler();
+
+  private ByteHandler byteHandler =
+    new DefaultPrimitiveHandlers.DefaultByteHandler();
+
+  private FloatHandler floatHandler =
+    new DefaultPrimitiveHandlers.DefaultFloatHandler();
+
+  private LongHandler longHandler =
+    new DefaultPrimitiveHandlers.DefaultLongHandler();
+
+  private ShortHandler shortHandler =
+    new DefaultPrimitiveHandlers.DefaultShortHandler();
+
+  private CharHandler charHandler =
+    new DefaultPrimitiveHandlers.DefaultCharHandler();
+
+  public void setIntHandler(IntHandler intHandler) {
+    this.intHandler = intHandler;
+  }
+
+  public void setDoubleHandler(DoubleHandler doubleHandler) {
+    this.doubleHandler = doubleHandler;
+  }
+
+  public void setBooleanHandler(BooleanHandler booleanHandler) {
+    this.booleanHandler = booleanHandler;
+  }
+
+  public void setByteHandler(ByteHandler byteHandler) {
+    this.byteHandler = byteHandler;
+  }
+
+  public void setFloatHandler(FloatHandler floatHandler) {
+    this.floatHandler = floatHandler;
+  }
+
+  public void setLongHandler(LongHandler longHandler) {
+    this.longHandler = longHandler;
+  }
+
+  public void setShortHandler(ShortHandler shortHandler) {
+    this.shortHandler = shortHandler;
+  }
+
+  public void setCharHandler(CharHandler charHandler) {
+    this.charHandler = charHandler;
+  }
+
   public void setObjectHandler(Class cls, ObjectHandler objectHandler) {
     objectHandlers.put(cls, objectHandler);
   }
@@ -112,12 +168,21 @@ public class CsvReader {
 
   private void createPrimitiveFieldHandlers() {
     fieldHandlers.put(Integer.TYPE,
-        new PrimitiveHandlers.IntFieldHandler(
-          new DefaultPrimitiveHandlers.DefaultIntHandler()));
+        new PrimitiveHandlers.IntFieldHandler(intHandler));
     fieldHandlers.put(Double.TYPE,
-        new PrimitiveHandlers.DoubleFieldHandler(
-          new DefaultPrimitiveHandlers.DefaultDoubleHandler()));
-//    fieldHandlers.put(Double.TYPE, new DblFieldHandler());
+        new PrimitiveHandlers.DoubleFieldHandler(doubleHandler));
+    fieldHandlers.put(Boolean.TYPE,
+        new PrimitiveHandlers.BooleanFieldHandler(booleanHandler));
+    fieldHandlers.put(Byte.TYPE,
+        new PrimitiveHandlers.ByteFieldHandler(byteHandler));
+    fieldHandlers.put(Float.TYPE,
+        new PrimitiveHandlers.FloatFieldHandler(floatHandler));
+    fieldHandlers.put(Long.TYPE,
+        new PrimitiveHandlers.LongFieldHandler(longHandler));
+    fieldHandlers.put(Short.TYPE,
+        new PrimitiveHandlers.ShortFieldHandler(shortHandler));
+    fieldHandlers.put(Character.TYPE,
+        new PrimitiveHandlers.CharFieldHandler(charHandler));
   }
 
   private void createObjectFieldHandlers() {
