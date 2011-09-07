@@ -118,6 +118,33 @@ public class SplitTest extends TestCase {
     assertEquals("88", result.get(3));
   }
 
+  public void testRequiredSplitLastElement() {
+    List<Integer> required = new ArrayList<Integer>();
+    required.add(1);
+    required.add(4);
+    required.add(5);
+    required.add(8);
+    String input = "00,11,22,33,44,55,66,77,88";
+    List<String> result = Split.splitReqiredFields(input, ',', required);
+    assertEquals(4, result.size());
+    assertEquals("11", result.get(0));
+    assertEquals("44", result.get(1));
+    assertEquals("55", result.get(2));
+    assertEquals("88", result.get(3));
+  }
+
+  public void testRequiredSplitNonIncreasing() {
+    List<Integer> required = new ArrayList<Integer>();
+    required.add(1);
+    required.add(4);
+    required.add(3);
+    String input = "00,11,22,33,44,55,66,77,88";
+    try {
+      List<String> result = Split.splitReqiredFields(input, ',', required);
+      fail("There was no exception.");
+    } catch (RuntimeException e) {}
+  }
+
   public static Test suite() {
     return new TestSuite(SplitTest.class);
   }

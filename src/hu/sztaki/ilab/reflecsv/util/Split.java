@@ -48,15 +48,12 @@ public class Split {
     int actualFieldNum = 0;
     int actualRequiredListIndex = 0;
     int actualRequiredFieldIndex = requiredFields.get(0);
-    StringBuffer sb = null;
-    if (actualFieldNum == actualRequiredFieldIndex) {
-      sb = new StringBuffer();
-    }
+    int beginIndex = 0;
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
       if (c == separator) {
          if (actualRequiredFieldIndex == actualFieldNum) {
-          res.add(sb.toString());
+          res.add(s.substring(beginIndex, i));
           ++actualRequiredListIndex;
           if (actualRequiredListIndex >= requiredFields.size()) {
             return res;
@@ -66,18 +63,16 @@ public class Split {
         }
         ++actualFieldNum;
         if (actualFieldNum == actualRequiredFieldIndex) {
-          sb = new StringBuffer();
-        } else {
-          sb = null;
-        }
-      } else {
-        if (actualFieldNum == actualRequiredFieldIndex) {
-          sb.append(c);
+          beginIndex = i + 1;
         }
       }
     }
-    res.add(sb.toString());
-    return res;
-
+    if (actualRequiredFieldIndex == actualFieldNum) {
+      res.add(s.substring(beginIndex, s.length()));
+      return res;
+    } else {
+      throw new RuntimeException("Internal inconsistency. " +
+          "Maybe the requiredFields list is not increasing");
+    }
  } 
 }
