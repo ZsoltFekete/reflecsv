@@ -4,11 +4,16 @@ import java.util.ArrayList;
 
 public class Split {
   public static ArrayList<String> split(String s, char separator) {
+    if (null == s) {
+      throw new RuntimeException("Split: String is null.");
+    }
+
     ArrayList<String> res = new ArrayList<String>();
     if (s.equals("")) {
       res.add(s);
       return res;
     }
+
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);

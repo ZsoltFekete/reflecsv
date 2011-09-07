@@ -35,6 +35,13 @@ public class SplitTest extends TestCase {
     assertEquals("", result.get(0));
   }
 
+  public void testNull() {
+    try {
+      ArrayList<String> result = Split.split(null, '|');
+      fail("Exception should has happened.");
+    } catch (RuntimeException e) {}
+  }
+
   public void testNotContains() {
     ArrayList<String> result = Split.split("test", '|');
     assertNotNull(result); 

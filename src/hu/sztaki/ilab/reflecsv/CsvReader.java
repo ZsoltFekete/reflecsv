@@ -69,6 +69,10 @@ public class CsvReader {
     bufferedreader = new BufferedReader(reader);
     readNextLine();
     headerString = line;
+    if (null == headerString) {
+      throw new RuntimeException("File is empty. " +
+          "It should contain at leas one line: a header");
+    }
     header = Split.split(headerString, separator);
     for (Object recordObject : recordObjects) {
       ObjectDescriptor objectDescriptor = new ObjectDescriptor();

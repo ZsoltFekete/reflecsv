@@ -121,6 +121,19 @@ public class CsvReaderTest extends TestCase {
     assertEquals(2, counter);
   }
 
+  public void testEmptyFile() {
+    String inputString = "";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+
+    int counter = 0;
+    try {
+      csvReader.start();
+      fail("Exception should have happened.");
+    } catch (RuntimeException e) {}
+  }
+
   public static Test suite() {
     return new TestSuite(CsvReaderTest.class);
   }
