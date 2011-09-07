@@ -23,6 +23,7 @@ public class CsvReader {
   private static class FieldDescriptor {
     public Field field;
     public int index;
+    public FieldHandler handler;
   }
 
   private static class ObjectDescriptor {
@@ -103,6 +104,8 @@ public class CsvReader {
     field.setAccessible(true);
     fieldDescriptor.field = field;
     fieldDescriptor.index = index;
+    FieldHandler fieldHandler = createFieldHandler(field.getType());
+    fieldDescriptor.handler = fieldHandler;
     return fieldDescriptor;
   }
 
@@ -114,7 +117,20 @@ public class CsvReader {
     }
     return -1;
   }
-    
+   
+  private FieldHandler createFieldHandler(Class cls) {
+    if (cls.equals(Integer.TYPE)) {
+      return new IntFieldHandler();
+    }
+    if (cls.equals(Double.TYPE)) {
+      return new DblFieldHandler();
+    }
+    if (cls.equals(String.class)) {
+      return new StringFieldHandler();
+    }
+    throw new RuntimeException("Not found handler");
+  }
+
   public boolean hasNext() {
     readNextLine();
     return (null != line);
@@ -132,41 +148,25 @@ public class CsvReader {
   public void next() {
     ArrayList<String> splittedLine = Split.split(line, separator);
     for (int i = 0; i < recordObjects.size(); ++i) {
-      Object obj = recordObjects.get(i);
+      Object recordObject = recordObjects.get(i);
       ObjectDescriptor objectDescriptor = objectDesciptors.get(i);
-      for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
-        int index = fieldDescriptor.index;
-        Field field = fieldDescriptor.field;
-        fillField(obj, field, splittedLine.get(index));
-      }
+      fillRecord(recordObject, objectDescriptor, splittedLine);
     } 
   }
 
-  private void fillField(Object obj, Field field, String value) {
-    if (field.getType().equals(Integer.TYPE)) {
-      int intValue = Integer.valueOf(value);
-      try {
-        field.setInt(obj, intValue);
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      }
+  private void fillRecord(Object recordObject, ObjectDescriptor objectDescriptor,
+      List<String> splittedLine) {
+    for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
+      fillField(recordObject, fieldDescriptor, splittedLine);
     }
+  }
 
-    if (field.getType().equals(Double.TYPE)) {
-      double doubleValue = Double.valueOf(value);
-      try {
-        field.setDouble(obj, doubleValue);
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      }
-    }
-
-    if (field.getType().equals(String.class)) {
-      try {
-        field.set(obj, value);
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      }
-    }
+  private void fillField(Object obj, FieldDescriptor fieldDescriptor,
+      List<String> splittedLine) {
+    int index = fieldDescriptor.index;
+    Field field = fieldDescriptor.field;
+    String value = splittedLine.get(index);
+    FieldHandler fieldHandler = fieldDescriptor.handler;
+    fieldHandler.fillField(field, obj, value);
   }
 }
