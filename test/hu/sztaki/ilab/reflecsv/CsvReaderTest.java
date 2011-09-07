@@ -152,6 +152,87 @@ public class CsvReaderTest extends TestCase {
     } catch (RuntimeException e) {}
   }
 
+  public void testOwnStringHandler() {
+    String inputString =
+      "field1,field2,field3\n" +
+      "1,qwe,3.4\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+
+    class MyStringHandler implements ObjectHandler {
+      public Object convert(String s) {
+        return "test_prefix_" + s;
+      }
+    }
+    csvReader.setObjectHandler(String.class, new MyStringHandler());
+
+    int counter = 0;
+    csvReader.start();
+    csvReader.hasNext();
+    csvReader.next();
+    assertEquals("test_prefix_qwe", record1.field2);
+  }
+
+  static class Sub {
+    public String s;
+  }
+
+  static class Record3 {
+    int field1;
+    Sub field2 = new Sub();
+  }
+
+  public void testNextWithoutHasNext() {
+    String inputString =
+      "field1,field2,field3\n" +
+      "1,qwe,3.4\n" +
+      "-3,asd,-4.5\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+    csvReader.start();
+    csvReader.next();
+    assertEquals("qwe", record1.field2);
+    csvReader.next();
+    assertEquals("asd", record1.field2);
+  }
+
+  public void testOwnClassHandler() {
+    String inputString =
+      "field1,field2,field3\n" +
+      "1,qwe,3.4\n" +
+      "1,asd,3.4\n" +
+      "1,other,3.4\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    // Record3 record3 = (Record3) csvReader.registerClass(Record3.class);
+    Record3 record3 = new Record3();
+    csvReader.registerObject(record3);
+
+    class MySubHandler implements ObjectHandler {
+      public Sub convert(String s) {
+        Sub sub = new Sub();
+        sub.s = s + s;
+        if (s.equals("qwe")) {
+          sub.s = "hello";
+        }
+        if (s.equals("asd")) {
+          sub.s = "world";
+        }
+        return sub;
+      }
+    }
+    csvReader.setObjectHandler(Sub.class, new MySubHandler());
+    csvReader.start();
+    csvReader.next();
+    assertEquals("hello", record3.field2.s);
+    csvReader.next();
+    assertEquals("world", record3.field2.s);
+    csvReader.next();
+    assertEquals("otherother", record3.field2.s);
+  }
+
   public static Test suite() {
     return new TestSuite(CsvReaderTest.class);
   }

@@ -22,6 +22,16 @@ public class CsvReader {
   private List<ObjectDescriptor> objectDesciptors =
     new ArrayList<ObjectDescriptor>();
 
+  private ArrayList<String> header;
+  private String headerString;
+  private BufferedReader bufferedreader;;
+
+  private Map<Class, ObjectHandler> objectHandlers =
+    new HashMap<Class, ObjectHandler>();
+
+  private Map<Class, FieldHandler> fieldHandlers =
+    new HashMap<Class, FieldHandler>();
+
   private static class FieldDescriptor {
     public Field field;
     public int index;
@@ -35,6 +45,11 @@ public class CsvReader {
   public CsvReader(Reader reader, char separator) {
     this.reader = reader;
     this.separator = separator;
+    createObjectHandlers();
+  }
+
+  private void createObjectHandlers() {
+    objectHandlers.put(String.class, new StringHandler());
   }
 
   public Object registerClass(Class<?> cls) {
@@ -63,14 +78,19 @@ public class CsvReader {
     */
     return null;
   }
-    
-  private ArrayList<String> header;
-  private String headerString;
-  private BufferedReader bufferedreader;;
 
+  public void setObjectHandler(Class cls, ObjectHandler objectHandler) {
+    objectHandlers.put(cls, objectHandler);
+  }
+    
   public void start() {
-    createHandlers();
+    createFieldHandlers();
     bufferedreader = new BufferedReader(reader);
+    matchRecordsWithHeader();
+    readNextLine();
+  }
+
+  private void matchRecordsWithHeader() {
     readNextLine();
     headerString = line;
     if (null == headerString) {
@@ -81,6 +101,25 @@ public class CsvReader {
     for (Object recordObject : recordObjects) {
       ObjectDescriptor objectDescriptor = createObjectDescriptor(recordObject);
       objectDesciptors.add(objectDescriptor);
+    }
+
+  }
+
+  private void createFieldHandlers() {
+    createPrimitiveFieldHandlers();
+    createObjectFieldHandlers();
+  }
+
+  private void createPrimitiveFieldHandlers() {
+    fieldHandlers.put(Integer.TYPE, new IntFieldHandler());
+    fieldHandlers.put(Double.TYPE, new DblFieldHandler());
+  }
+
+  private void createObjectFieldHandlers() {
+    for (Map.Entry<Class, ObjectHandler> entry : objectHandlers.entrySet()) {
+      Class cls = entry.getKey();
+      ObjectHandler objectHandler = entry.getValue();
+      fieldHandlers.put(cls, new ObjectFieldHandler(objectHandler));
     }
   }
 
@@ -121,14 +160,6 @@ public class CsvReader {
     return -1;
   }
  
-  private Map<Class, FieldHandler> fieldHandlers =
-    new HashMap<Class, FieldHandler>();
-  private void createHandlers() {
-    fieldHandlers.put(Integer.TYPE, new IntFieldHandler());
-    fieldHandlers.put(Double.TYPE, new DblFieldHandler());
-    fieldHandlers.put(String.class, new StringFieldHandler());
-  } 
-
   private FieldHandler createFieldHandler(Class cls) {
     if (fieldHandlers.containsKey(cls)) {
       return fieldHandlers.get(cls);
@@ -138,7 +169,6 @@ public class CsvReader {
   }
 
   public boolean hasNext() {
-    readNextLine();
     return (null != line);
   }
 
@@ -158,6 +188,7 @@ public class CsvReader {
       ObjectDescriptor objectDescriptor = objectDesciptors.get(i);
       fillRecord(recordObject, objectDescriptor, splittedLine);
     } 
+    readNextLine();
   }
 
   private void fillRecord(Object recordObject, ObjectDescriptor objectDescriptor,
@@ -176,3 +207,15 @@ public class CsvReader {
     fieldHandler.fillField(field, obj, value);
   }
 }
+
+/*
+void setBoolean(Object obj, boolean z)
+void setByte(Object obj, byte b)
+void setChar(Object obj, char c)
+void setDouble(Object obj, double d)
+void setFloat(Object obj, float f)
+void setInt(Object obj, int i)
+void setLong(Object obj, long l)
+void setShort(Object obj, short s)
+*/
+
