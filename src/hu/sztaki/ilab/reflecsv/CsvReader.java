@@ -158,7 +158,6 @@ public class CsvReader {
       ObjectDescriptor objectDescriptor = createObjectDescriptor(recordObject);
       objectDesciptors.add(objectDescriptor);
     }
-
   }
 
   private void createFieldHandlers() {
@@ -277,15 +276,4 @@ public class CsvReader {
     fieldHandler.fillField(field, obj, value);
   }
 }
-
-/*
-void setBoolean(Object obj, boolean z)
-void setByte(Object obj, byte b)
-void setChar(Object obj, char c)
-void setDouble(Object obj, double d)
-void setFloat(Object obj, float f)
-void setInt(Object obj, int i)
-void setLong(Object obj, long l)
-void setShort(Object obj, short s)
-*/
 
