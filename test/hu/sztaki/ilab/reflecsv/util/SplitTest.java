@@ -105,10 +105,6 @@ public class SplitTest extends TestCase {
 
   public void testRequiredSplitNonEmptyList() {
     int[] required = new int[] {1, 4, 5, 8};
-//    required.add(1);
-//    required.add(4);
-//    required.add(5);
-//    required.add(8);
     String input = "00,11,22,33,44,55,66,77,88,99,1010";
     String[] result = Split.splitReqiredFields(input, ',', required);
     assertEquals(4, result.length);
@@ -120,10 +116,6 @@ public class SplitTest extends TestCase {
 
   public void testRequiredSplitLastElement() {
     int[] required = new int[] {1, 4, 5, 8};
-//    required.add(1);
-//    required.add(4);
-//    required.add(5);
-//    required.add(8);
     String input = "00,11,22,33,44,55,66,77,88";
     String[] result = Split.splitReqiredFields(input, ',', required);
     assertEquals(4, result.length);
@@ -135,9 +127,6 @@ public class SplitTest extends TestCase {
 
   public void testRequiredSplitNonIncreasing() {
     int[] required = new int[]{1, 4, 3};
-//    required.add(1);
-//    required.add(4);
-//    required.add(3);
     String input = "00,11,22,33,44,55,66,77,88";
     try {
       String[] result = Split.splitReqiredFields(input, ',', required);
