@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CsvReader {
 
@@ -67,6 +69,7 @@ public class CsvReader {
   private BufferedReader bufferedreader;;
 
   public void start() {
+    createHandlers();
     bufferedreader = new BufferedReader(reader);
     readNextLine();
     headerString = line;
@@ -117,18 +120,21 @@ public class CsvReader {
     }
     return -1;
   }
-   
+ 
+  private Map<Class, FieldHandler> fieldHandlers =
+    new HashMap<Class, FieldHandler>();
+  private void createHandlers() {
+    fieldHandlers.put(Integer.TYPE, new IntFieldHandler());
+    fieldHandlers.put(Double.TYPE, new DblFieldHandler());
+    fieldHandlers.put(String.class, new StringFieldHandler());
+  } 
+
   private FieldHandler createFieldHandler(Class cls) {
-    if (cls.equals(Integer.TYPE)) {
-      return new IntFieldHandler();
+    if (fieldHandlers.containsKey(cls)) {
+      return fieldHandlers.get(cls);
+    } else {
+      throw new RuntimeException("Not found handler");
     }
-    if (cls.equals(Double.TYPE)) {
-      return new DblFieldHandler();
-    }
-    if (cls.equals(String.class)) {
-      return new StringFieldHandler();
-    }
-    throw new RuntimeException("Not found handler");
   }
 
   public boolean hasNext() {
