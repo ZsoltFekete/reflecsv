@@ -49,8 +49,7 @@ public class CsvReaderTest extends TestCase {
     Reader stringReader = new StringReader("");
     CsvReader csvReader = new CsvReader(stringReader, ',');
     Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
-    Record2 record2 = (Record2) csvReader.registerClass(Record2.class);
-//    Record1 record1 = csvReader.registerClass();
+    Record2 record2 = csvReader.registerClass(new Record2());
     assertNotNull(record1);
     assertTrue(record1 instanceof Record1);
     assertNotNull(record2);
@@ -206,9 +205,7 @@ public class CsvReaderTest extends TestCase {
       "1,other,3.4\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    // Record3 record3 = (Record3) csvReader.registerClass(Record3.class);
-    Record3 record3 = new Record3();
-    csvReader.registerObject(record3);
+    Record3 record3 = csvReader.registerClass(new Record3());
 
     class MySubHandler implements ObjectHandler {
       public Sub convert(String s) {

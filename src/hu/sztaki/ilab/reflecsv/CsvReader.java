@@ -73,13 +73,11 @@ public class CsvReader {
     recordObjects.add(obj);
   }
 
-  public <T> T registerClass() {
-/*
-    Class cls = T.class;
-    Class[] emtpyList = new Class[0];
-    Constructor constructor = cls.getConstructor(emtpyList);
-    */
-    return null;
+  public <T> T registerClass(T t) {
+    Class cls = t.getClass();
+    @SuppressWarnings("unchecked")
+    T result = (T) registerClass(cls);
+    return result;
   }
 
   private IntHandler intHandler =
