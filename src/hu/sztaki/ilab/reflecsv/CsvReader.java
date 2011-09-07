@@ -112,8 +112,12 @@ public class CsvReader {
 
   private void createPrimitiveFieldHandlers() {
     fieldHandlers.put(Integer.TYPE,
-        new IntFieldHandler(new DefaultIntHandler()));
-    fieldHandlers.put(Double.TYPE, new DblFieldHandler());
+        new PrimitiveHandlers.IntFieldHandler(
+          new DefaultPrimitiveHandlers.DefaultIntHandler()));
+    fieldHandlers.put(Double.TYPE,
+        new PrimitiveHandlers.DoubleFieldHandler(
+          new DefaultPrimitiveHandlers.DefaultDoubleHandler()));
+//    fieldHandlers.put(Double.TYPE, new DblFieldHandler());
   }
 
   private void createObjectFieldHandlers() {
