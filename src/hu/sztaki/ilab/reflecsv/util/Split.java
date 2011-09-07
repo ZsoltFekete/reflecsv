@@ -49,13 +49,14 @@ public class Split {
     int actualRequiredListIndex = 0;
     int actualRequiredFieldIndex = requiredFields.get(0);
     int beginIndex = 0;
-    for (int i = 0; i < s.length(); i++) {
-      char c = s.charAt(i);
-      if (c == separator) {
-         if (actualRequiredFieldIndex == actualFieldNum) {
+    int stringLength = s.length();
+    int numberOfRequiredField = requiredFields.size();
+    for (int i = 0; i < stringLength; i++) {
+      if (s.charAt(i) == separator) {
+         if (actualFieldNum == actualRequiredFieldIndex) {
           res.add(s.substring(beginIndex, i));
           ++actualRequiredListIndex;
-          if (actualRequiredListIndex >= requiredFields.size()) {
+          if (actualRequiredListIndex >= numberOfRequiredField) {
             return res;
           }
           actualRequiredFieldIndex =
@@ -67,8 +68,8 @@ public class Split {
         }
       }
     }
-    if (actualRequiredFieldIndex == actualFieldNum) {
-      res.add(s.substring(beginIndex, s.length()));
+    if (actualFieldNum == actualRequiredFieldIndex) {
+      res.add(s.substring(beginIndex, stringLength));
       return res;
     } else {
       throw new RuntimeException("Internal inconsistency. " +
