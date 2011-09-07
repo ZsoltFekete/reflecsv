@@ -13,8 +13,10 @@ public class CsvReader {
 
   private Reader reader;
   private char separator;
+  
+  private String line = null;
 
-  private List<Object> registeredObjects = new ArrayList<Object>();
+  private List<Object> recordObjects = new ArrayList<Object>();
   private List<ObjectDescriptor> objectDesciptors =
     new ArrayList<ObjectDescriptor>();
 
@@ -47,7 +49,7 @@ public class CsvReader {
   }
 
   public void registerObject(Object obj) {
-    registeredObjects.add(obj);
+    recordObjects.add(obj);
   }
 
   public <T> T registerClass() {
@@ -64,16 +66,13 @@ public class CsvReader {
   private BufferedReader bufferedreader;;
 
   public void start() {
-    try {
-      bufferedreader = new BufferedReader(reader);
-      headerString = bufferedreader.readLine();
-    } catch (java.io.IOException e) {
-      e.printStackTrace();
-    }
+    bufferedreader = new BufferedReader(reader);
+    readNextLine();
+    headerString = line;
     header = Split.split(headerString, separator);
-    for (Object registeredObject : registeredObjects) {
+    for (Object recordObject : recordObjects) {
       ObjectDescriptor objectDescriptor = new ObjectDescriptor();
-      Class cls = registeredObject.getClass();
+      Class cls = recordObject.getClass();
       Field fieldlist[] = cls.getDeclaredFields();
       for (int i = 0; i < fieldlist.length; i++) {
         Field field = fieldlist[i];
@@ -84,6 +83,7 @@ public class CsvReader {
              headerString);
         }
         FieldDescriptor fieldDescriptor = new FieldDescriptor();
+        field.setAccessible(true);
         fieldDescriptor.field = field;
         fieldDescriptor.index = index;
         objectDescriptor.fields.add(fieldDescriptor);
@@ -101,26 +101,24 @@ public class CsvReader {
     return -1;
   }
     
-  String line = null;
-
   public boolean hasNext() {
+    readNextLine();
+    return (null != line);
+  }
+
+  private void readNextLine() {
+    line = null;
     try {
       line = bufferedreader.readLine();
-      if (null != line) {
-        return true;
-      } else {
-        return false;
-      }
     } catch (java.io.IOException e) {
       e.printStackTrace();
-      return false;
     }
   }
 
   public void next() {
     ArrayList<String> splittedLine = Split.split(line, separator);
-    for (int i = 0; i < registeredObjects.size(); ++i) {
-      Object obj = registeredObjects.get(i);
+    for (int i = 0; i < recordObjects.size(); ++i) {
+      Object obj = recordObjects.get(i);
       ObjectDescriptor objectDescriptor = objectDesciptors.get(i);
       for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
         int index = fieldDescriptor.index;
