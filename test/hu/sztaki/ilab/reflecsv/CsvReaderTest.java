@@ -121,6 +121,24 @@ public class CsvReaderTest extends TestCase {
     assertEquals(2, counter);
   }
 
+  public void testNoEndlineAtTheEnd() {
+    String inputString =
+      "field1,field2,field3\n" +
+      "1,qwe,3.4\n" +
+      "-3,asd,-4.5";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+
+    int counter = 0;
+    csvReader.start();
+    while (csvReader.hasNext()) {
+      csvReader.next();
+      ++counter;
+    }
+    assertEquals(2, counter);
+  }
+
   public void testEmptyFile() {
     String inputString = "";
     Reader stringReader = new StringReader(inputString);
