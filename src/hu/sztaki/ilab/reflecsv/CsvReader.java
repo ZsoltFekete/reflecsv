@@ -75,30 +75,35 @@ public class CsvReader {
     }
     header = Split.split(headerString, separator);
     for (Object recordObject : recordObjects) {
-      ObjectDescriptor objectDesciptor = createObjectDescriptor();
+      ObjectDescriptor objectDescriptor = createObjectDescriptor(recordObject);
       objectDesciptors.add(objectDescriptor);
     }
   }
 
-  private ObjectDescriptor createObjectDescriptor() {
+  private ObjectDescriptor createObjectDescriptor(Object recordObject) {
     ObjectDescriptor objectDescriptor = new ObjectDescriptor();
     Class cls = recordObject.getClass();
     Field fieldlist[] = cls.getDeclaredFields();
     for (int i = 0; i < fieldlist.length; i++) {
       Field field = fieldlist[i];
-      int index = findInHeader(field.getName());
-      if (-1 == index) {
-        throw new RuntimeException("Field \"" + field.getName() +
-            "\" was not found in header. The header was:\n" +
-            headerString);
-      }
-      FieldDescriptor fieldDescriptor = new FieldDescriptor();
-      field.setAccessible(true);
-      fieldDescriptor.field = field;
-      fieldDescriptor.index = index;
+      FieldDescriptor fieldDescriptor = createFieldDescriptor(field);
       objectDescriptor.fields.add(fieldDescriptor);
     }
     return objectDescriptor;
+  }
+
+  private FieldDescriptor createFieldDescriptor(Field field) {
+    int index = findInHeader(field.getName());
+    if (-1 == index) {
+      throw new RuntimeException("Field \"" + field.getName() +
+          "\" was not found in header. The header was:\n" +
+          headerString);
+    }
+    FieldDescriptor fieldDescriptor = new FieldDescriptor();
+    field.setAccessible(true);
+    fieldDescriptor.field = field;
+    fieldDescriptor.index = index;
+    return fieldDescriptor;
   }
 
   private int findInHeader(String name) {
