@@ -83,6 +83,20 @@ public class CsvReaderTest extends TestCase {
     assertFalse(csvReader.hasNext());
   }
 
+  public void testNotFound() {
+    String inputString =
+      "field1_,field2,field3\n" +
+      "1,qwe,3.4\n" +
+      "-3,asd,-4.5\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+    try {
+      csvReader.start();
+    fail("Excepion was not arised.");
+    } catch (RuntimeException e) {}
+  }
+
   public void testWhileLoop() {
     String inputString =
       "field1,field2,field3\n" +

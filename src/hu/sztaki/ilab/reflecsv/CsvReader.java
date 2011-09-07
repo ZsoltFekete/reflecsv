@@ -60,18 +60,17 @@ public class CsvReader {
   }
     
   private ArrayList<String> header;
+  private String headerString;
   private BufferedReader bufferedreader;;
 
   public void start() {
-    String line = null;
     try {
       bufferedreader = new BufferedReader(reader);
-      line = bufferedreader.readLine();
+      headerString = bufferedreader.readLine();
     } catch (java.io.IOException e) {
       e.printStackTrace();
     }
-    // ArrayList<String> header = Split.split(line, separator);
-    header = Split.split(line, separator);
+    header = Split.split(headerString, separator);
     for (Object registeredObject : registeredObjects) {
       ObjectDescriptor objectDescriptor = new ObjectDescriptor();
       Class cls = registeredObject.getClass();
@@ -80,7 +79,9 @@ public class CsvReader {
         Field field = fieldlist[i];
         int index = findInHeader(field.getName());
         if (-1 == index) {
-          throw new RuntimeException("qwe");
+          throw new RuntimeException("Field \"" + field.getName() +
+              "\" was not found in header. The header was:\n" +
+             headerString);
         }
         FieldDescriptor fieldDescriptor = new FieldDescriptor();
         fieldDescriptor.field = field;
