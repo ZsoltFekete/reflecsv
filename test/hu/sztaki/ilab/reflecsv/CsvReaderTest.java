@@ -107,7 +107,6 @@ public class CsvReaderTest extends TestCase {
     Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
 
     int counter = 0;
-
     csvReader.start();
     while (csvReader.hasNext()) {
       csvReader.next();
