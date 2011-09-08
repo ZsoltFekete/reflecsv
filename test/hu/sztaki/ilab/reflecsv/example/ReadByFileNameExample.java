@@ -20,7 +20,7 @@ public class ReadByFileNameExample {
       System.exit(1);
     }
 
-    Record record = (Record) csvReader.registerClass(Record.class);
+    Record record = csvReader.registerClass(Record.class);
 
     csvReader.start();
     while (csvReader.hasNext()) {

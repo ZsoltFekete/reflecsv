@@ -22,7 +22,7 @@ public class Example {
 
     CsvReader csvReader = new CsvReader(fileReader, ',');
 
-    Record record = (Record) csvReader.registerClass(Record.class);
+    Record record = csvReader.registerClass(Record.class);
 
     csvReader.start();
     while (csvReader.hasNext()) {

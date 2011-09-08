@@ -48,7 +48,7 @@ public class CsvReaderTest extends TestCase {
   public void testRegisterClass() {
     Reader stringReader = new StringReader("");
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+    Record1 record1 = csvReader.registerClass(Record1.class);
     Record2 record2 = csvReader.registerClass(new Record2());
     assertNotNull(record1);
     assertTrue(record1 instanceof Record1);
@@ -63,7 +63,7 @@ public class CsvReaderTest extends TestCase {
       "-3,asd,-4.5\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+    Record1 record1 = csvReader.registerClass(Record1.class);
     Record2 record2 = new Record2();
     csvReader.registerObject(record2);
     csvReader.start();
@@ -89,7 +89,7 @@ public class CsvReaderTest extends TestCase {
       "-3,asd,-4.5\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+    Record1 record1 = csvReader.registerClass(Record1.class);
     try {
       csvReader.start();
     fail("Excepion was not arised.");
@@ -144,7 +144,7 @@ public class CsvReaderTest extends TestCase {
     String inputString = "";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+    Record1 record1 = csvReader.registerClass(Record1.class);
 
     int counter = 0;
     try {
@@ -159,7 +159,7 @@ public class CsvReaderTest extends TestCase {
       "1,qwe,3.4\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+    Record1 record1 = csvReader.registerClass(Record1.class);
 
     class MyStringHandler implements ObjectHandler {
       public Object convert(String s) {
@@ -191,7 +191,7 @@ public class CsvReaderTest extends TestCase {
       "-3,asd,-4.5\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+    Record1 record1 = csvReader.registerClass(Record1.class);
     csvReader.start();
     csvReader.next();
     assertEquals("qwe", record1.field2);
@@ -249,7 +249,7 @@ public class CsvReaderTest extends TestCase {
       "1,2,3,4,5,6,7,8\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record record = (Record) csvReader.registerClass(Record.class);
+    Record record = csvReader.registerClass(Record.class);
 
     class MyIntHandler implements IntHandler {
       public int convert(String s) {
@@ -327,7 +327,7 @@ public class CsvReaderTest extends TestCase {
       "11,qwe,s2,3.4\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+    Record1 record1 = csvReader.registerClass(Record1.class);
 
     int counter = 0;
     csvReader.start();
@@ -354,7 +354,7 @@ public class CsvReaderTest extends TestCase {
       "1,2,3,4,5,6,7,8,9,10,11,12,13,14\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    LongRecord record = (LongRecord) csvReader.registerClass(LongRecord.class);
+    LongRecord record = csvReader.registerClass(LongRecord.class);
 
     int counter = 0;
     csvReader.start();
