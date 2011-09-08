@@ -400,6 +400,37 @@ public class CsvReaderTest extends TestCase {
     assertEquals(new Short((short) 23), record.short_);
   }
 
+  public void testDuplicateField() {
+    String inputString =
+      "field1,field2,field2\n" +
+      "1,qwe,3.4\n" +
+      "-3,asd,-4.5\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    Record1 record1 = csvReader.registerClass(new Record1());
+    try {
+      csvReader.start();
+      fail("Theres was no exception.");
+    } catch (RuntimeException e) {}
+  }
+
+  public void testAllowedDuplicateField() {
+    String inputString =
+      "field1,field2,field3,field3\n" +
+      "1,qwe,3.4,3.4\n" +
+      "-3,asd,-4.5,-4.5\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    Record1 record1 = csvReader.registerClass(new Record1());
+    try {
+      csvReader.start();
+    } catch (RuntimeException e) {
+      fail("Theres was exception occured. But this case is allowed.");
+      e.printStackTrace();
+    }
+  }
+
+
   public static Test suite() {
     return new TestSuite(CsvReaderTest.class);
   }

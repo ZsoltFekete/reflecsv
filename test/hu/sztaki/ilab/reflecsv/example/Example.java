@@ -4,7 +4,7 @@ import hu.sztaki.ilab.reflecsv.CsvReader;
 
 public class Example {
 
-  private static class Record {
+  private static class Record implements Cloneable {
     public int field1;
     public String field2;
   }

@@ -284,12 +284,24 @@ public class CsvReader {
   }
 
   private int findInHeader(String name) {
+    boolean isFound = false;
+    int foundIndex = -1;
     for (int i = 0; i < header.size(); ++i) {
       if (header.get(i).equals(name)) {
-        return i;
+        if (isFound) {
+          throw new RuntimeException("Field \"" + name +
+              "\" is duplicated in header.");
+        } else {
+          isFound = true;
+          foundIndex = i;
+        }
       }
     }
-    return -1;
+    if (isFound) {
+      return foundIndex;
+    } else {
+      return -1;
+    }
   }
  
   private FieldHandler createFieldHandler(Class cls) {
