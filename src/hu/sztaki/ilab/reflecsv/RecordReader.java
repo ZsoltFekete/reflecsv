@@ -4,6 +4,10 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.lang.reflect.Method;
+
 public class RecordReader <T> {
 
   private Reader reader;
@@ -16,7 +20,14 @@ public class RecordReader <T> {
     this.sampleRecord = sampleRecord;
   }
 
-  List<T> read() {
+  public RecordReader(String fileName, char separator, T sampleRecord)
+    throws FileNotFoundException{
+    this.separator = separator;
+    this.sampleRecord = sampleRecord;
+    this.reader = new FileReader(fileName);
+  }
+
+  public List<T> read() {
     CsvReader csvReader = new CsvReader(reader, ',');
     List<T> list = new ArrayList<T>();
     csvReader.registerObject(sampleRecord);
@@ -30,8 +41,10 @@ public class RecordReader <T> {
   
   T cloneObject(T t) {
     try {
+      Method method = t.getClass().getMethod("clone");
+      method.setAccessible(true);
       @SuppressWarnings("unchecked")
-      T result = (T) t.getClass().getMethod("clone").invoke(t);
+      T result = (T) method.invoke(t);
       return result;
     } catch (java.lang.IllegalAccessException e) {
       e.printStackTrace();
