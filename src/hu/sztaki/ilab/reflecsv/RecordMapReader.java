@@ -59,7 +59,7 @@ public class RecordMapReader <ID, ID_RECORD extends IdRecord<ID>, T> {
     return map;
   }
   
-  T cloneObject(T t) {
+  private T cloneObject(T t) {
     try {
       Method method = t.getClass().getMethod("clone");
       method.setAccessible(true);

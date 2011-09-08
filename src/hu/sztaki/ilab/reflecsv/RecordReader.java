@@ -39,7 +39,7 @@ public class RecordReader <T> {
     return list;
   }
   
-  T cloneObject(T t) {
+  private T cloneObject(T t) {
     try {
       Method method = t.getClass().getMethod("clone");
       method.setAccessible(true);
