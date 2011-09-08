@@ -37,6 +37,9 @@ public class CsvReader {
   private Map<Class, FieldHandler> fieldHandlers =
     new HashMap<Class, FieldHandler>();
 
+  private List<Integer> sortedIndexList = new ArrayList<Integer>();
+  private int[] sortedIndexArray;
+
   private static class FieldDescriptor {
     public Field field;
     public int originalIndex;
@@ -175,14 +178,12 @@ public class CsvReader {
   public void start() {
     createFieldHandlers();
     bufferedreader = new BufferedReader(reader);
+    readHeader();
     matchRecordsWithHeader();
     readNextLine();
   }
 
-  private List<Integer> sortedIndexList = new ArrayList<Integer>();
-  private int[] sortedIndexArray;
-
-  private void matchRecordsWithHeader() {
+  private void readHeader() {
     readNextLine();
     headerString = line;
     if (null == headerString) {
@@ -190,23 +191,47 @@ public class CsvReader {
           "It should contain at leas one line: a header");
     }
     header = Split.split(headerString, separator);
+  }
+
+  private void matchRecordsWithHeader() {
+    fillObjectDesciptorList();
+    SortedSet<Integer> sortedIndices = new TreeSet<Integer>();
+    collectAllIndices(sortedIndices);
+    Map<Integer, Integer> originalToNewIndex =
+      createOriginalToNewIndexMap(sortedIndices);
+    sortedIndexArray = createSortedIndexArray(sortedIndices);
+    fillNewIndexMembers(originalToNewIndex);
+  }
+
+  private void fillObjectDesciptorList() {
     for (Object recordObject : recordObjects) {
       ObjectDescriptor objectDescriptor = createObjectDescriptor(recordObject);
       objectDesciptors.add(objectDescriptor);
     }
-    SortedSet<Integer> sortedIndices = new TreeSet<Integer>();
-    collectAllIndices(sortedIndices);
-    int counter = 0;
+  }
+
+  private Map<Integer, Integer> createOriginalToNewIndexMap(
+      SortedSet<Integer> sortedIndices) {
     Map<Integer, Integer> originalToNewIndex = new HashMap<Integer, Integer>();
+    int counter = 0;
     for (Integer index : sortedIndices) {
       originalToNewIndex.put(index, counter);
-      sortedIndexList.add(index);
       ++counter;
     }
-    sortedIndexArray = new int[sortedIndexList.size()];
-    for (int i = 0 ; i < sortedIndexList.size(); ++i) {
-      sortedIndexArray[i] = sortedIndexList.get(i);
+    return originalToNewIndex;
+  }
+
+  private int[] createSortedIndexArray(SortedSet<Integer> sortedIndices) {
+    int[] result = new int[sortedIndices.size()];
+    int counter = 0;
+    for (Integer index : sortedIndices) {
+      result[counter] = index;
+      ++counter;
     }
+    return result;
+  }
+
+  private void fillNewIndexMembers(Map<Integer, Integer> originalToNewIndex) {
     for (ObjectDescriptor objectDescriptor : objectDesciptors) {
       for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
         fieldDescriptor.newIndex =
