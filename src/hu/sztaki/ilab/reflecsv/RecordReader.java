@@ -34,12 +34,12 @@ public class RecordReader <T> {
     csvReader.start();
     while (csvReader.hasNext()) {
       csvReader.next();
-      list.add(cloneObject(sampleRecord));
+      list.add(getRecordClone());
     }
     return list;
   }
   
-  private <T> T cloneObject(T t) {
-    return ObjectCloner.clone(t);
+  private T getRecordClone() {
+    return ObjectCloner.clone(sampleRecord);
   }
 }

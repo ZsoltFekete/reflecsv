@@ -54,12 +54,12 @@ public class RecordMapReader <ID, ID_RECORD extends IdRecord<ID>, T> {
       if (isExceptionForDuplicateId && map.containsKey(id)) {
         throw new RuntimeException("The following id is a duplicate:" + id.toString());
       }
-      map.put(id, cloneObject(sampleRecord));
+      map.put(id, getRecordClone());
     }
     return map;
   }
   
-  private T cloneObject(T t) {
-    return ObjectCloner.clone(t);
+  private T getRecordClone() {
+    return ObjectCloner.clone(sampleRecord);
   }
 }
