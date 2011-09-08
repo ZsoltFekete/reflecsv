@@ -7,8 +7,9 @@ public class ObjectCloner {
     try {
       Method method = t.getClass().getMethod("clone");
       method.setAccessible(true);
+      Object obj = method.invoke(t);
       @SuppressWarnings("unchecked")
-      T result = (T) method.invoke(t);
+      T result = (T) obj;
       return result;
     } catch (java.lang.IllegalAccessException e) {
       e.printStackTrace();

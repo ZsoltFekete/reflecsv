@@ -86,14 +86,16 @@ public class CsvReader {
         new DefaultObjectHandlers.CharHandler());
   }
 
-  public Object registerClass(Class<?> cls) {
+  public <T> T registerClass(Class<?> cls) {
     Object[] emtpyList = new Object[0];
     try {
       Constructor constructor = cls.getDeclaredConstructor();
       constructor.setAccessible(true);
       Object obj = constructor.newInstance();
       registerObject(obj);
-      return obj;
+      @SuppressWarnings("unchecked")
+      T result = (T) obj;
+      return result;
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -107,9 +109,7 @@ public class CsvReader {
 
   public <T> T registerClass(T t) {
     Class cls = t.getClass();
-    @SuppressWarnings("unchecked")
-    T result = (T) registerClass(cls);
-    return result;
+    return registerClass(cls);
   }
 
   private IntHandler intHandler =
