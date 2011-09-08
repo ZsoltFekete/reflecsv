@@ -66,7 +66,24 @@ public class CsvReader {
   }
 
   private void createObjectHandlers() {
-    objectHandlers.put(String.class, new StringHandler());
+    objectHandlers.put(String.class,
+        new DefaultObjectHandlers.StringHandler());
+    objectHandlers.put(Integer.class,
+        new DefaultObjectHandlers.IntHandler());
+    objectHandlers.put(Double.class,
+        new DefaultObjectHandlers.DoubleHandler());
+    objectHandlers.put(Boolean.class,
+        new DefaultObjectHandlers.BooleanHandler());
+    objectHandlers.put(Byte.class,
+        new DefaultObjectHandlers.ByteHandler());
+    objectHandlers.put(Float.class,
+        new DefaultObjectHandlers.FloatHandler());
+    objectHandlers.put(Long.class,
+        new DefaultObjectHandlers.LongHandler());
+    objectHandlers.put(Short.class,
+        new DefaultObjectHandlers.ShortHandler());
+    objectHandlers.put(Character.class,
+        new DefaultObjectHandlers.CharHandler());
   }
 
   public Object registerClass(Class<?> cls) {

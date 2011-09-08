@@ -369,6 +369,37 @@ public class CsvReaderTest extends TestCase {
     assertEquals("11", record.field11);
   }
 
+  static class ObjectRecord {
+    Integer int_;
+    Byte byte_;
+    Character char_;
+    Double double_;
+    Float float_;
+    Boolean boolean_;
+    Long long_;
+    Short short_;
+  }
+
+  public void testDefaultObjectHandlers() {
+    String inputString =
+      "int_,byte_,char_,double_,float_,boolean_,long_,short_\n" +
+      "123,114,q,3.45,3.78,true,567,23\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    ObjectRecord record = csvReader.registerClass(new ObjectRecord());
+
+    csvReader.start();
+    csvReader.next();
+    assertEquals(new Integer(123), record.int_);
+    assertEquals(new Byte((byte) 114), record.byte_);
+    assertEquals(new Character('q'), record.char_);
+    assertEquals(3.45, record.double_);
+    assertEquals(3.78f, record.float_);
+    assertEquals(new Boolean(true), record.boolean_);
+    assertEquals(new Long(567), record.long_);
+    assertEquals(new Short((short) 23), record.short_);
+  }
+
   public static Test suite() {
     return new TestSuite(CsvReaderTest.class);
   }
