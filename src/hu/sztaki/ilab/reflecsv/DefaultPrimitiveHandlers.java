@@ -1,6 +1,6 @@
 package hu.sztaki.ilab.reflecsv;
 
-public class DefaultPrimitiveHandlers {
+class DefaultPrimitiveHandlers {
 
   public static class DefaultIntHandler implements IntHandler {
     public int convert(String value) {

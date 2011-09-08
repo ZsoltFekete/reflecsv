@@ -1,6 +1,6 @@
 package hu.sztaki.ilab.reflecsv;
 
-public class DefaultObjectHandlers {
+class DefaultObjectHandlers {
 
   public static class StringHandler implements ObjectHandler {
     public Object convert(String value) {
