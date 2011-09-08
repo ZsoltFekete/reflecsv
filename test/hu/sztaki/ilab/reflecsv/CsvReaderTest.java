@@ -103,7 +103,8 @@ public class CsvReaderTest extends TestCase {
       "-3,asd,-4.5\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+    Record1 record1 = new Record1();
+    csvReader.registerObject(record1);
 
     int counter = 0;
     csvReader.start();
@@ -127,7 +128,8 @@ public class CsvReaderTest extends TestCase {
       "-3,asd,-4.5";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = (Record1) csvReader.registerClass(Record1.class);
+
+    Record1 record1 = csvReader.registerObject(new Record1());
 
     int counter = 0;
     csvReader.start();

@@ -14,7 +14,7 @@ public class Example {
 
     java.io.Reader fileReader = null;
     try {
-      fileReader = new java.io.FileReader(args[0]);
+      fileReader = new java.io.FileReader(fileName);
     } catch (Exception e) {
       e.printStackTrace();
       System.exit(1);

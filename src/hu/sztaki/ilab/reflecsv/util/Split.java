@@ -59,8 +59,12 @@ public class Split {
           if (actualRequiredListIndex >= numberOfRequiredField) {
             return res;
           }
-          actualRequiredFieldIndex =
-            requiredFields[actualRequiredListIndex];
+          int nextIndex = requiredFields[actualRequiredListIndex];
+          if (nextIndex <= actualRequiredFieldIndex) {
+            throw new RuntimeException("List is not increasing:" +
+                intArrayToString(requiredFields));
+          }
+          actualRequiredFieldIndex = nextIndex;
         }
         ++actualFieldNum;
         if (actualFieldNum == actualRequiredFieldIndex) {
@@ -72,8 +76,21 @@ public class Split {
       res[actualRequiredListIndex] = s.substring(beginIndex, stringLength);
       return res;
     } else {
-      throw new RuntimeException("Internal inconsistency. " +
-          "Maybe the requiredFields list is not increasing");
+      if (actualFieldNum < actualRequiredFieldIndex) {
+        throw new RuntimeException("There is only " + (actualFieldNum + 1) +
+            " field in string \"" + s + "\"" +
+            " and there is a required field inded: " +
+            actualRequiredFieldIndex);
+      }
+      throw new RuntimeException("Internal inconsistency.");
     }
- } 
+  } 
+
+ private static String intArrayToString(int[] array) {
+   StringBuffer sb = new StringBuffer();
+   for (int i = 0; i < array.length; ++i) {
+     sb.append(" " + array[i]);
+   }
+   return sb.toString();
+ }
 }

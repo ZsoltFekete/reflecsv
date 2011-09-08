@@ -6,12 +6,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.io.BufferedReader;
 import java.io.Reader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 
 public class CsvReader {
 
@@ -51,6 +54,17 @@ public class CsvReader {
     createObjectHandlers();
   }
 
+  public CsvReader(String fileName, char separator)
+    throws FileNotFoundException {
+    this.separator = separator;
+    createReader(fileName);
+    createObjectHandlers();
+  }
+
+  private void createReader(String fileName) throws FileNotFoundException {
+    reader = new FileReader(fileName);
+  }
+
   private void createObjectHandlers() {
     objectHandlers.put(String.class, new StringHandler());
   }
@@ -69,8 +83,9 @@ public class CsvReader {
     return null;
   }
 
-  public void registerObject(Object obj) {
+  public <T> T registerObject(T obj) {
     recordObjects.add(obj);
+    return obj;
   }
 
   public <T> T registerClass(T t) {

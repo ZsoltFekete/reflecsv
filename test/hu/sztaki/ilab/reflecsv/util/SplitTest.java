@@ -134,6 +134,15 @@ public class SplitTest extends TestCase {
     } catch (RuntimeException e) {}
   }
 
+  public void testRequiredSplitNotEnoughFields() {
+    int[] required = new int[]{1, 3, 4, 9};
+    String input = "00,11,22,33,44,55";
+    try {
+      String[] result = Split.splitReqiredFields(input, ',', required);
+      fail("There was no exception.");
+    } catch (RuntimeException e) {}
+  }
+
   public static Test suite() {
     return new TestSuite(SplitTest.class);
   }
