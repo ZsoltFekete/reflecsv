@@ -39,20 +39,7 @@ public class RecordReader <T> {
     return list;
   }
   
-  private T cloneObject(T t) {
-    try {
-      Method method = t.getClass().getMethod("clone");
-      method.setAccessible(true);
-      @SuppressWarnings("unchecked")
-      T result = (T) method.invoke(t);
-      return result;
-    } catch (java.lang.IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (java.lang.NoSuchMethodException e) {
-      e.printStackTrace();
-    } catch (java.lang.reflect.InvocationTargetException e) {
-      e.printStackTrace();
-    }
-    return null;
+  private <T> T cloneObject(T t) {
+    return ObjectCloner.clone(t);
   }
 }
