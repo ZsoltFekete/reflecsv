@@ -2,7 +2,6 @@ package hu.sztaki.ilab.reflecsv;
 
 import hu.sztaki.ilab.reflecsv.util.Split;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.annotation.Annotation;
 import java.io.BufferedReader;
@@ -93,18 +92,8 @@ public class CsvReader {
   }
 
   public <T> T registerClass(Class<T> cls) {
-    Object[] emtpyList = new Object[0];
-    try {
-      Constructor constructor = cls.getDeclaredConstructor();
-      constructor.setAccessible(true);
-      Object obj = constructor.newInstance();
-      registerObject(obj);
-      T result = cls.cast(obj);
-      return result;
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
+    T t = Constructor.construct(cls);
+    return registerObject(t);
   }
 
   public <T> T registerObject(T obj) {
