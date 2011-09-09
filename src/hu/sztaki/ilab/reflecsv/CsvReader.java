@@ -4,6 +4,7 @@ import hu.sztaki.ilab.reflecsv.util.Split;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.annotation.Annotation;
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.FileNotFoundException;
@@ -280,6 +281,7 @@ public class CsvReader {
     Field fieldlist[] = cls.getDeclaredFields();
     for (int i = 0; i < fieldlist.length; i++) {
       Field field = fieldlist[i];
+      String name = getAnnotationOrFieldName(field);
       FieldDescriptor fieldDescriptor = createFieldDescriptor(field);
       objectDescriptor.fields.add(fieldDescriptor);
     }
@@ -287,9 +289,10 @@ public class CsvReader {
   }
 
   private FieldDescriptor createFieldDescriptor(Field field) {
-    int originalIndex = findInHeader(field.getName());
+    String name = getAnnotationOrFieldName(field);
+    int originalIndex = findInHeader(name);
     if (-1 == originalIndex) {
-      throw new RuntimeException("Field \"" + field.getName() +
+      throw new RuntimeException("Field \"" + name +
           "\" was not found in header. The header was:\n" +
           headerString);
     }
@@ -300,6 +303,15 @@ public class CsvReader {
     FieldHandler fieldHandler = createFieldHandler(field.getType());
     fieldDescriptor.handler = fieldHandler;
     return fieldDescriptor;
+  }
+
+  private static String getAnnotationOrFieldName(Field field) {
+    Name annotation = field.getAnnotation(Name.class);
+    if (null != annotation) {
+      return annotation.value();
+    } else {
+      return field.getName();
+    }
   }
 
   private int findInHeader(String name) {

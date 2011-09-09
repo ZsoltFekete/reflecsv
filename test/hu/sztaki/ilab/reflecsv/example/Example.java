@@ -1,12 +1,14 @@
 package  hu.sztaki.ilab.reflecsv.example;
 
 import hu.sztaki.ilab.reflecsv.CsvReader;
+import hu.sztaki.ilab.reflecsv.Name;
 import java.io.FileNotFoundException;
 
 public class Example {
 
   private static class Record implements Cloneable {
-    public int field1;
+    @Name("field1")
+    public int field1_;
     public String field2;
   }
 
@@ -28,7 +30,7 @@ public class Example {
     csvReader.start();
     while (csvReader.hasNext()) {
       csvReader.next();
-      System.out.println("field1 = " + record.field1);
+      System.out.println("field1 = " + record.field1_);
       System.out.println("field2 = " + record.field2);
     }
   }

@@ -430,6 +430,37 @@ public class CsvReaderTest extends TestCase {
     }
   }
 
+  private static class Record4 {
+    @Name ("field 1")
+    public int field1_;
+    @Name ("field_2")
+    public String field2;
+    @Name ("Field 3")
+    public double field3;
+  }
+
+  public void testAnnotation() {
+    String inputString =
+      "field 1,field_2,Field 3\n" +
+      "1,qwe,3.4\n" +
+      "-3,asd,-4.5\n";
+    Reader stringReader = new StringReader(inputString);
+    CsvReader csvReader = new CsvReader(stringReader, ',');
+    Record4 record = csvReader.registerObject(new Record4());
+
+    csvReader.start();
+    assertTrue(csvReader.hasNext());
+    csvReader.next();
+    assertEquals(1, record.field1_);
+    assertEquals("qwe", record.field2);
+    assertEquals(3.4, record.field3);
+    assertTrue(csvReader.hasNext());
+    csvReader.next();
+    assertEquals(-3, record.field1_);
+    assertEquals("asd", record.field2);
+    assertEquals(-4.5, record.field3);
+    assertFalse(csvReader.hasNext());
+  }
 
   public static Test suite() {
     return new TestSuite(CsvReaderTest.class);
