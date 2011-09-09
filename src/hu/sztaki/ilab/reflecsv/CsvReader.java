@@ -351,6 +351,26 @@ public class CsvReader {
     }
   }
 
+  public <T> T getNextRecord() {
+    next();
+    if (0 == recordObjects.size()) {
+      return null;
+    }
+    @SuppressWarnings("unchecked")
+    T result = ObjectCloner.clone((T)recordObjects.get(0));
+    return result;
+  }
+
+  public Object[] getNextRecords() {
+    next();
+    Object[] result = new Object[recordObjects.size()];
+    for (int i = 0; i < recordObjects.size(); ++i) {
+  //    @SuppressWarnings("unchecked")
+      result[i] = ObjectCloner.clone(recordObjects.get(i));
+    }
+    return result;
+  }
+
   public void next() {
     if (isFirstHasNextOrNext) {
       start();

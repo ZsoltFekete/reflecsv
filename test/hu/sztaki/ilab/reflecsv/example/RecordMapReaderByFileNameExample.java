@@ -10,12 +10,6 @@ public class RecordMapReaderByFileNameExample {
   private static class Record {
     public double field3;
     public String field2;
-    public Record clone() {
-      Record copy = new Record();
-      copy.field2 = field2;
-      copy.field3 = field3;
-      return copy;
-    }
   }
 
   private static class Id implements IdRecord<Integer> {

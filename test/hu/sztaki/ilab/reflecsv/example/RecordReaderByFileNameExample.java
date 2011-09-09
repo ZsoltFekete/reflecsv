@@ -9,12 +9,6 @@ public class RecordReaderByFileNameExample {
   private static class Record {
     public int field1;
     public String field2;
-    public Record clone() {
-      Record copy = new Record();
-      copy.field1 = field1;
-      copy.field2 = field2;
-      return copy;
-    }
   }
 
   public static void main(String args[]) {

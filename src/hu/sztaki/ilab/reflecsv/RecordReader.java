@@ -32,13 +32,9 @@ public class RecordReader <T> {
     List<T> list = new ArrayList<T>();
     csvReader.registerObject(sampleRecord);
     while (csvReader.hasNext()) {
-      csvReader.next();
-      list.add(getRecordClone());
+      T nextRecord = csvReader.getNextRecord();
+      list.add(nextRecord);
     }
     return list;
-  }
-  
-  private T getRecordClone() {
-    return ObjectCloner.clone(sampleRecord);
   }
 }

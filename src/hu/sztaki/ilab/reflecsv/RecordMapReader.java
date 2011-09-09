@@ -48,17 +48,16 @@ public class RecordMapReader <ID, ID_RECORD extends IdRecord<ID>, T> {
     csvReader.registerObject(sampleRecord);
     csvReader.registerObject(idRecord);
     while (csvReader.hasNext()) {
-      csvReader.next();
-      ID id = idRecord.getId();
+      Object[] records = csvReader.getNextRecords();
+      @SuppressWarnings("unchecked")
+      ID id = ((ID_RECORD) records[1]).getId();
       if (isExceptionForDuplicateId && map.containsKey(id)) {
         throw new RuntimeException("The following id is a duplicate:" + id.toString());
       }
-      map.put(id, getRecordClone());
+      @SuppressWarnings("unchecked")
+      T t = (T)records[0];
+      map.put(id, t);
     }
     return map;
-  }
-  
-  private T getRecordClone() {
-    return ObjectCloner.clone(sampleRecord);
   }
 }

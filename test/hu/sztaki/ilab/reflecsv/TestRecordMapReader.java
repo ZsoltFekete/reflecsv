@@ -29,12 +29,6 @@ public class TestRecordMapReader extends TestCase {
   private static class Record1 {
     public int field1;
     public String field2;
-    public Record1 clone() {
-      Record1 copy = new Record1();
-      copy.field1 = field1;
-      copy.field2 = field2;
-      return copy;
-    }
   }
 
   public void testRecordMapReader() {
