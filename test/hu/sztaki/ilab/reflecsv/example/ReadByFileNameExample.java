@@ -23,7 +23,6 @@ public class ReadByFileNameExample {
 
     Record record = csvReader.registerClass(Record.class);
 
-    csvReader.start();
     while (csvReader.hasNext()) {
       csvReader.next();
       System.out.println("field1 = " + record.field1);

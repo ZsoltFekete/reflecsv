@@ -24,6 +24,8 @@ public class CsvReader {
   
   private String line = null;
 
+  private boolean isFirstHasNextOrNext = true;
+
   private List<Object> recordObjects = new ArrayList<Object>();
   private List<ObjectDescriptor> objectDesciptors =
     new ArrayList<ObjectDescriptor>();
@@ -170,7 +172,7 @@ public class CsvReader {
     objectHandlers.put(cls, objectHandler);
   }
     
-  public void start() {
+  private void start() {
     createFieldHandlers();
     bufferedreader = new BufferedReader(reader);
     readHeader();
@@ -344,6 +346,10 @@ public class CsvReader {
   }
 
   public boolean hasNext() {
+    if (isFirstHasNextOrNext) {
+      start();
+      isFirstHasNextOrNext = false;
+    }
     return (null != line);
   }
 
@@ -357,6 +363,10 @@ public class CsvReader {
   }
 
   public void next() {
+    if (isFirstHasNextOrNext) {
+      start();
+      isFirstHasNextOrNext = false;
+    }
     String[] splittedLine = Split.splitReqiredFields(line, separator,
         sortedIndexArray);
     for (int i = 0; i < recordObjects.size(); ++i) {

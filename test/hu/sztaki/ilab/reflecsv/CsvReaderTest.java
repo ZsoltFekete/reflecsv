@@ -66,7 +66,6 @@ public class CsvReaderTest extends TestCase {
     Record1 record1 = csvReader.registerClass(Record1.class);
     Record2 record2 = new Record2();
     csvReader.registerObject(record2);
-    csvReader.start();
     assertTrue(csvReader.hasNext());
     csvReader.next();
     assertEquals(1, record1.field1);
@@ -91,7 +90,7 @@ public class CsvReaderTest extends TestCase {
     CsvReader csvReader = new CsvReader(stringReader, ',');
     Record1 record1 = csvReader.registerClass(Record1.class);
     try {
-      csvReader.start();
+      csvReader.hasNext();
     fail("Excepion was not arised.");
     } catch (RuntimeException e) {}
   }
@@ -107,7 +106,6 @@ public class CsvReaderTest extends TestCase {
     csvReader.registerObject(record1);
 
     int counter = 0;
-    csvReader.start();
     while (csvReader.hasNext()) {
       csvReader.next();
       if (0 == counter) {
@@ -132,7 +130,6 @@ public class CsvReaderTest extends TestCase {
     Record1 record1 = csvReader.registerObject(new Record1());
 
     int counter = 0;
-    csvReader.start();
     while (csvReader.hasNext()) {
       csvReader.next();
       ++counter;
@@ -148,7 +145,7 @@ public class CsvReaderTest extends TestCase {
 
     int counter = 0;
     try {
-      csvReader.start();
+      csvReader.hasNext();
       fail("Exception should have happened.");
     } catch (RuntimeException e) {}
   }
@@ -169,8 +166,6 @@ public class CsvReaderTest extends TestCase {
     csvReader.setObjectHandler(String.class, new MyStringHandler());
 
     int counter = 0;
-    csvReader.start();
-    csvReader.hasNext();
     csvReader.next();
     assertEquals("test_prefix_qwe", record1.field2);
   }
@@ -192,7 +187,6 @@ public class CsvReaderTest extends TestCase {
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
     Record1 record1 = csvReader.registerClass(Record1.class);
-    csvReader.start();
     csvReader.next();
     assertEquals("qwe", record1.field2);
     csvReader.next();
@@ -223,7 +217,6 @@ public class CsvReaderTest extends TestCase {
       }
     }
     csvReader.setObjectHandler(Sub.class, new MySubHandler());
-    csvReader.start();
     csvReader.next();
     assertEquals("hello", record3.field2.s);
     csvReader.next();
@@ -308,7 +301,6 @@ public class CsvReaderTest extends TestCase {
     csvReader.setShortHandler(new MyShortHandler());
     csvReader.setCharHandler(new MyCharHandler());
 
-    csvReader.start();
     csvReader.next();
     assertEquals(123, record.int_);
     assertEquals(114, record.byte_);
@@ -330,7 +322,6 @@ public class CsvReaderTest extends TestCase {
     Record1 record1 = csvReader.registerClass(Record1.class);
 
     int counter = 0;
-    csvReader.start();
     csvReader.next();
     assertEquals(11, record1.field1);
     assertEquals("s2", record1.field2);
@@ -357,7 +348,6 @@ public class CsvReaderTest extends TestCase {
     LongRecord record = csvReader.registerClass(LongRecord.class);
 
     int counter = 0;
-    csvReader.start();
     csvReader.next();
     csvReader.next();
     csvReader.next();
@@ -388,7 +378,6 @@ public class CsvReaderTest extends TestCase {
     CsvReader csvReader = new CsvReader(stringReader, ',');
     ObjectRecord record = csvReader.registerObject(new ObjectRecord());
 
-    csvReader.start();
     csvReader.next();
     assertEquals(new Integer(123), record.int_);
     assertEquals(new Byte((byte) 114), record.byte_);
@@ -409,7 +398,7 @@ public class CsvReaderTest extends TestCase {
     CsvReader csvReader = new CsvReader(stringReader, ',');
     Record1 record1 = csvReader.registerObject(new Record1());
     try {
-      csvReader.start();
+      csvReader.hasNext();
       fail("Theres was no exception.");
     } catch (RuntimeException e) {}
   }
@@ -423,7 +412,7 @@ public class CsvReaderTest extends TestCase {
     CsvReader csvReader = new CsvReader(stringReader, ',');
     Record1 record1 = csvReader.registerObject(new Record1());
     try {
-      csvReader.start();
+      csvReader.hasNext();
     } catch (RuntimeException e) {
       fail("Theres was exception occured. But this case is allowed.");
       e.printStackTrace();
@@ -448,7 +437,6 @@ public class CsvReaderTest extends TestCase {
     CsvReader csvReader = new CsvReader(stringReader, ',');
     Record4 record = csvReader.registerObject(new Record4());
 
-    csvReader.start();
     assertTrue(csvReader.hasNext());
     csvReader.next();
     assertEquals(1, record.field1_);

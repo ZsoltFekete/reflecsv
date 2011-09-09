@@ -47,7 +47,6 @@ public class RecordMapReader <ID, ID_RECORD extends IdRecord<ID>, T> {
     Map<ID, T> map = new HashMap<ID, T>();
     csvReader.registerObject(sampleRecord);
     csvReader.registerObject(idRecord);
-    csvReader.start();
     while (csvReader.hasNext()) {
       csvReader.next();
       ID id = idRecord.getId();

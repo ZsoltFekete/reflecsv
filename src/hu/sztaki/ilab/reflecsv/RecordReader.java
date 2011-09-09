@@ -31,7 +31,6 @@ public class RecordReader <T> {
     CsvReader csvReader = new CsvReader(reader, ',');
     List<T> list = new ArrayList<T>();
     csvReader.registerObject(sampleRecord);
-    csvReader.start();
     while (csvReader.hasNext()) {
       csvReader.next();
       list.add(getRecordClone());
