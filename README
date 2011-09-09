@@ -1,0 +1,21 @@
+reflecsv
+
+# Wiki
+
+See the wiki pages of the project on github: https://github.com/ZsoltFekete/reflecsv/wiki
+
+# Build and run tests
+
+First you have to download junit and put it in the directory `lib`, for example:
+
+    cd lib/
+    wget https://github.com/downloads/KentBeck/junit/junit-4.9b3.jar
+    cd ..
+
+* compile with `./compile.sh`
+* run unit tests with `./run_tests.sh`
+* run "acceptance tests" `./acceptance_tests.sh`
+* all: `./compile.sh && ./run_tests.sh && ./acceptance_tests.sh`
+
+Build and create the jar file: `ant`
+
