@@ -1,6 +1,7 @@
 package  hu.sztaki.ilab.reflecsv.example;
 
 import hu.sztaki.ilab.reflecsv.CsvReader;
+import java.io.FileNotFoundException;
 
 public class Example {
 
@@ -15,7 +16,7 @@ public class Example {
     java.io.Reader fileReader = null;
     try {
       fileReader = new java.io.FileReader(fileName);
-    } catch (Exception e) {
+    } catch (FileNotFoundException e) {
       e.printStackTrace();
       System.exit(1);
     }

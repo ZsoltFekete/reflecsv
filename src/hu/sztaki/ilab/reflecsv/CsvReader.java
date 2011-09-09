@@ -110,11 +110,6 @@ public class CsvReader {
     return obj;
   }
 
-  public <T> T registerClass(T t) {
-    Class cls = t.getClass();
-    return registerClass(cls);
-  }
-
   private IntHandler intHandler =
     new DefaultPrimitiveHandlers.DefaultIntHandler();
 

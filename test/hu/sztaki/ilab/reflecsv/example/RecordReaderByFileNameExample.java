@@ -1,6 +1,7 @@
 package  hu.sztaki.ilab.reflecsv.example;
 
 import hu.sztaki.ilab.reflecsv.RecordReader;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public class RecordReaderByFileNameExample {
@@ -22,7 +23,7 @@ public class RecordReaderByFileNameExample {
     RecordReader<Record> recordReader = null;
     try {
       recordReader = new RecordReader<Record>(fileName, ',', new Record());
-    } catch (Exception e) {
+    } catch (FileNotFoundException e) {
       e.printStackTrace();
       System.exit(1);
     }

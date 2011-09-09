@@ -49,7 +49,7 @@ public class CsvReaderTest extends TestCase {
     Reader stringReader = new StringReader("");
     CsvReader csvReader = new CsvReader(stringReader, ',');
     Record1 record1 = csvReader.registerClass(Record1.class);
-    Record2 record2 = csvReader.registerClass(new Record2());
+    Record2 record2 = csvReader.registerObject(new Record2());
     assertNotNull(record1);
     assertTrue(record1 instanceof Record1);
     assertNotNull(record2);
@@ -207,7 +207,7 @@ public class CsvReaderTest extends TestCase {
       "1,other,3.4\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record3 record3 = csvReader.registerClass(new Record3());
+    Record3 record3 = csvReader.registerObject(new Record3());
 
     class MySubHandler implements ObjectHandler {
       public Sub convert(String s) {
@@ -386,7 +386,7 @@ public class CsvReaderTest extends TestCase {
       "123,114,q,3.45,3.78,true,567,23\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    ObjectRecord record = csvReader.registerClass(new ObjectRecord());
+    ObjectRecord record = csvReader.registerObject(new ObjectRecord());
 
     csvReader.start();
     csvReader.next();
@@ -407,7 +407,7 @@ public class CsvReaderTest extends TestCase {
       "-3,asd,-4.5\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = csvReader.registerClass(new Record1());
+    Record1 record1 = csvReader.registerObject(new Record1());
     try {
       csvReader.start();
       fail("Theres was no exception.");
@@ -421,7 +421,7 @@ public class CsvReaderTest extends TestCase {
       "-3,asd,-4.5,-4.5\n";
     Reader stringReader = new StringReader(inputString);
     CsvReader csvReader = new CsvReader(stringReader, ',');
-    Record1 record1 = csvReader.registerClass(new Record1());
+    Record1 record1 = csvReader.registerObject(new Record1());
     try {
       csvReader.start();
     } catch (RuntimeException e) {

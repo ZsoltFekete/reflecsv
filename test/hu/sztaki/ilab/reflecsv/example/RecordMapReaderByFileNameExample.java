@@ -2,6 +2,7 @@ package  hu.sztaki.ilab.reflecsv.example;
 
 import hu.sztaki.ilab.reflecsv.RecordMapReader;
 import hu.sztaki.ilab.reflecsv.IdRecord;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 public class RecordMapReaderByFileNameExample {
@@ -31,7 +32,7 @@ public class RecordMapReaderByFileNameExample {
     try {
       recordReader = new RecordMapReader<Integer, Id, Record>(fileName,
           ',', new Id(), new Record());
-    } catch (Exception e) {
+    } catch (FileNotFoundException e) {
       e.printStackTrace();
       System.exit(1);
     }
