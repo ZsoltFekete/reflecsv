@@ -36,7 +36,7 @@
     <path refid="compile.classpath"/>
   </path>
 
-  <target name="clean">
+  <target name="clean" description="Removing build depcache and reflecsv.jar" >
     <echo message="clean" /> 
     <delete dir="build" failonerror="false" includeemptydirs="true" quiet="true" /> 
     <delete dir="depcache" failonerror="false" includeemptydirs="true" quiet="true" /> 
@@ -46,7 +46,7 @@
   <!-- ================================================================== -->
   <!-- Compile all classes                                                --> 
   <!-- ================================================================== -->
-  <target name="compile" >
+  <target name="compile" description="Compiling sources in src." >
     <echo message="Compile" /> 
     <mkdir dir="${build.path}" />
     <depend srcdir="${src.dir}"
@@ -65,7 +65,7 @@
   <!-- ================================================================== -->
   <!-- Compile unit tests                                                 --> 
   <!-- ================================================================== -->
-  <target name="compile-test" depends="compile">
+  <target name="compile-test" depends="compile" description="Compiling test (it depends on compiling src)" >
     <mkdir dir="${test.build.classes}" />
     <javac destdir="${test.build.classes}" debug="${debug}" optimize="${optimize}"
 	   deprecation="on" includeAntRuntime="no" includeJavaRuntime="no">
@@ -77,7 +77,7 @@
   <!-- ================================================================== -->
   <!-- Run unit tests                                                     --> 
   <!-- ================================================================== -->
-  <target name="unit-tests" depends="compile-test" description="Run unit tests">
+  <target name="unit-tests" depends="compile-test" description="Running unit tests (it depends on compiling src and test).">
     <delete dir="${test.log.dir}"/>
     <mkdir dir="${test.log.dir}"/>
     <junit showoutput="${test.output}"
@@ -106,7 +106,7 @@
   <!-- ================================================================== -->
   <!-- Create jar                                                         --> 
   <!-- ================================================================== -->
-  <target name="jar" depends="compile">
+  <target name="jar" depends="compile" description="Building jar (it depends on compiling src.)" >
 
     <manifestclasspath property="jar.classpath" jarfile="${build.jar}">
       <classpath refid="compile.classpath"/>
@@ -122,7 +122,7 @@
   <!-- ================================================================== -->
   <!-- Run acceptance tests                                                         --> 
   <!-- ================================================================== -->
-  <target name="test" depends="unit-tests" description="Running acceptance tests" >
+  <target name="test" depends="unit-tests" description="Running acceptance tests (it depends on compiling src, test and running unit tests)" >
     <exec executable="/bin/bash">
       <arg value="acceptance_tests.sh"/>
       <arg value="build/test/classes:build/src/classes"/>

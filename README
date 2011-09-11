@@ -12,10 +12,30 @@ First you have to download junit and put it in the directory `lib`, for example:
     wget https://github.com/downloads/KentBeck/junit/junit-4.9b3.jar
     cd ..
 
+
+
+Build with bash-scripts:
+
 * compile with `./compile.sh`
 * run unit tests with `./run_tests.sh`
 * run "acceptance tests" `./acceptance_tests.sh`
 * all: `./compile.sh && ./run_tests.sh && ./acceptance_tests.sh`
 
-Build and create the jar file: `ant`
+
+
+Build with `ant`
+
+Targets:
+
+ant clean : Removing build depcache and reflecsv.jar
+
+ant compile : Compiling sources in src
+
+ant compile-tests : Compiling test (it depends on compiling src)
+
+ant unit-tests : Running unit tests (it depends on compiling src and test).
+
+ant jar : Building jar (it depends on compiling src.)
+
+ant test : Running acceptance tests (it depends on compiling src, test and running unit tests)
 
