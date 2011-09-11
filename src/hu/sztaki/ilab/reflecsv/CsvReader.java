@@ -10,15 +10,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 
 public class CsvReader {
 
   private Reader reader;
+
   private char separator;
   
   private String line = null;
@@ -26,13 +22,17 @@ public class CsvReader {
   private boolean isFirstHasNextOrNext = true;
 
   private List<Object> recordObjects = new ArrayList<Object>();
+
   private List<ObjectDescriptor> objectDesciptors;
 
   private ArrayList<String> header;
+
   private String headerString;
+
   private BufferedReader bufferedreader;;
 
   private List<Integer> sortedIndexList = new ArrayList<Integer>();
+
   private int[] sortedIndexArray;
 
   private TypeManager typeManeger = new TypeManager();
@@ -100,13 +100,18 @@ public class CsvReader {
     
   private void start() {
     bufferedreader = new BufferedReader(reader);
+
     readHeader();
+
     typeManeger.createFieldHandlers();
+
     ObjectDescriptorCreator objectDescriptorCreator =
       new ObjectDescriptorCreator(typeManeger, recordObjects, headerString,
-      header);
+        header);
     objectDesciptors = objectDescriptorCreator.createObjectDescriptors();
-    matchRecordsWithHeader();
+
+    createSortedIndicesAndReIndexFieldDescriptors();
+
     readNextLine();
   }
 
@@ -120,55 +125,10 @@ public class CsvReader {
     header = Split.split(headerString, separator);
   }
 
-  private void matchRecordsWithHeader() {
-    SortedSet<Integer> sortedIndices = collectAllIndices();
-
-    Map<Integer, Integer> originalToNewIndex =
-      createOriginalToNewIndexMap(sortedIndices);
-
-    sortedIndexArray = createSortedIndexArray(sortedIndices);
-  
-    fillNewIndexMembers(originalToNewIndex);
-  }
-
-  private SortedSet<Integer> collectAllIndices() {
-    SortedSet<Integer> sortedIndices = new TreeSet<Integer>();
-    for (ObjectDescriptor objectDescriptor : objectDesciptors) {
-      for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
-        sortedIndices.add(fieldDescriptor.originalIndex);
-      }
-    }
-    return sortedIndices;
-  }
-
-  private Map<Integer, Integer> createOriginalToNewIndexMap(
-      SortedSet<Integer> sortedIndices) {
-    Map<Integer, Integer> originalToNewIndex = new HashMap<Integer, Integer>();
-    int counter = 0;
-    for (Integer index : sortedIndices) {
-      originalToNewIndex.put(index, counter);
-      ++counter;
-    }
-    return originalToNewIndex;
-  }
-
-  private int[] createSortedIndexArray(SortedSet<Integer> sortedIndices) {
-    int[] result = new int[sortedIndices.size()];
-    int counter = 0;
-    for (Integer index : sortedIndices) {
-      result[counter] = index;
-      ++counter;
-    }
-    return result;
-  }
-
-  private void fillNewIndexMembers(Map<Integer, Integer> originalToNewIndex) {
-    for (ObjectDescriptor objectDescriptor : objectDesciptors) {
-      for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
-        fieldDescriptor.newIndex =
-          originalToNewIndex.get(fieldDescriptor.originalIndex);
-      }
-    }
+  private void createSortedIndicesAndReIndexFieldDescriptors() {
+    ReIndexer reIndexer = new ReIndexer(objectDesciptors);
+    sortedIndexArray = reIndexer.createSortedIndexArray();
+    reIndexer.reIndexFieldDescriptors();
   }
 
   public boolean hasNext() {
@@ -238,5 +198,6 @@ public class CsvReader {
     FieldHandler fieldHandler = fieldDescriptor.handler;
     fieldHandler.fillField(field, obj, value);
   }
+
 }
 
