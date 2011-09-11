@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.io.Reader;
 import java.io.StringReader;
 
-public class CsvReaderTest extends TestCase {
+public class TestCsvReader extends TestCase {
 
   @Override
   protected void setUp() {
@@ -451,7 +451,7 @@ public class CsvReaderTest extends TestCase {
   }
 
   public static Test suite() {
-    return new TestSuite(CsvReaderTest.class);
+    return new TestSuite(TestCsvReader.class);
   }
 
   public static void main (String[] args) {
