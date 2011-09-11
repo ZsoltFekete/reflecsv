@@ -26,8 +26,7 @@ public class CsvReader {
   private boolean isFirstHasNextOrNext = true;
 
   private List<Object> recordObjects = new ArrayList<Object>();
-  private List<ObjectDescriptor> objectDesciptors =
-    new ArrayList<ObjectDescriptor>();
+  private List<ObjectDescriptor> objectDesciptors;
 
   private ArrayList<String> header;
   private String headerString;
@@ -37,17 +36,6 @@ public class CsvReader {
   private int[] sortedIndexArray;
 
   private TypeManager typeManeger = new TypeManager();
-
-  private static class FieldDescriptor {
-    public Field field;
-    public int originalIndex;
-    public int newIndex;
-    public FieldHandler handler;
-  }
-
-  private static class ObjectDescriptor {
-    public List<FieldDescriptor> fields = new ArrayList<FieldDescriptor>();
-  }
 
   public CsvReader(Reader reader, char separator) {
     this.reader = reader;
@@ -111,9 +99,13 @@ public class CsvReader {
   }
     
   private void start() {
-    typeManeger.createFieldHandlers();
     bufferedreader = new BufferedReader(reader);
     readHeader();
+    typeManeger.createFieldHandlers();
+    ObjectDescriptorCreator objectDescriptorCreator =
+      new ObjectDescriptorCreator(typeManeger, recordObjects, headerString,
+      header);
+    objectDesciptors = objectDescriptorCreator.createObjectDescriptors();
     matchRecordsWithHeader();
     readNextLine();
   }
@@ -129,20 +121,24 @@ public class CsvReader {
   }
 
   private void matchRecordsWithHeader() {
-    fillObjectDesciptorList();
-    SortedSet<Integer> sortedIndices = new TreeSet<Integer>();
-    collectAllIndices(sortedIndices);
+    SortedSet<Integer> sortedIndices = collectAllIndices();
+
     Map<Integer, Integer> originalToNewIndex =
       createOriginalToNewIndexMap(sortedIndices);
+
     sortedIndexArray = createSortedIndexArray(sortedIndices);
+  
     fillNewIndexMembers(originalToNewIndex);
   }
 
-  private void fillObjectDesciptorList() {
-    for (Object recordObject : recordObjects) {
-      ObjectDescriptor objectDescriptor = createObjectDescriptor(recordObject);
-      objectDesciptors.add(objectDescriptor);
+  private SortedSet<Integer> collectAllIndices() {
+    SortedSet<Integer> sortedIndices = new TreeSet<Integer>();
+    for (ObjectDescriptor objectDescriptor : objectDesciptors) {
+      for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
+        sortedIndices.add(fieldDescriptor.originalIndex);
+      }
     }
+    return sortedIndices;
   }
 
   private Map<Integer, Integer> createOriginalToNewIndexMap(
@@ -175,74 +171,6 @@ public class CsvReader {
     }
   }
 
-  private void collectAllIndices(SortedSet<Integer> sortedIndices) {
-    for (ObjectDescriptor objectDescriptor : objectDesciptors) {
-      for (FieldDescriptor fieldDescriptor : objectDescriptor.fields) {
-        sortedIndices.add(fieldDescriptor.originalIndex);
-      }
-    }
-  }
-
-  private ObjectDescriptor createObjectDescriptor(Object recordObject) {
-    ObjectDescriptor objectDescriptor = new ObjectDescriptor();
-    Class cls = recordObject.getClass();
-    Field fieldlist[] = cls.getDeclaredFields();
-    for (int i = 0; i < fieldlist.length; i++) {
-      Field field = fieldlist[i];
-      String name = getAnnotationOrFieldName(field);
-      FieldDescriptor fieldDescriptor = createFieldDescriptor(field);
-      objectDescriptor.fields.add(fieldDescriptor);
-    }
-    return objectDescriptor;
-  }
-
-  private FieldDescriptor createFieldDescriptor(Field field) {
-    String name = getAnnotationOrFieldName(field);
-    int originalIndex = findInHeader(name);
-    if (-1 == originalIndex) {
-      throw new RuntimeException("Field \"" + name +
-          "\" was not found in header. The header was:\n" +
-          headerString);
-    }
-    FieldDescriptor fieldDescriptor = new FieldDescriptor();
-    field.setAccessible(true);
-    fieldDescriptor.field = field;
-    fieldDescriptor.originalIndex = originalIndex;
-    FieldHandler fieldHandler = typeManeger.createFieldHandler(field.getType());
-    fieldDescriptor.handler = fieldHandler;
-    return fieldDescriptor;
-  }
-
-  private static String getAnnotationOrFieldName(Field field) {
-    Name annotation = field.getAnnotation(Name.class);
-    if (null != annotation) {
-      return annotation.value();
-    } else {
-      return field.getName();
-    }
-  }
-
-  private int findInHeader(String name) {
-    boolean isFound = false;
-    int foundIndex = -1;
-    for (int i = 0; i < header.size(); ++i) {
-      if (header.get(i).equals(name)) {
-        if (isFound) {
-          throw new RuntimeException("Field \"" + name +
-              "\" is duplicated in header.");
-        } else {
-          isFound = true;
-          foundIndex = i;
-        }
-      }
-    }
-    if (isFound) {
-      return foundIndex;
-    } else {
-      return -1;
-    }
-  }
- 
   public boolean hasNext() {
     if (isFirstHasNextOrNext) {
       start();
