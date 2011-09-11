@@ -33,14 +33,10 @@ public class CsvReader {
   private String headerString;
   private BufferedReader bufferedreader;;
 
-  private Map<Class, ObjectHandler> objectHandlers =
-    new HashMap<Class, ObjectHandler>();
-
-  private Map<Class, FieldHandler> fieldHandlers =
-    new HashMap<Class, FieldHandler>();
-
   private List<Integer> sortedIndexList = new ArrayList<Integer>();
   private int[] sortedIndexArray;
+
+  private TypeManager typeManeger = new TypeManager();
 
   private static class FieldDescriptor {
     public Field field;
@@ -56,39 +52,16 @@ public class CsvReader {
   public CsvReader(Reader reader, char separator) {
     this.reader = reader;
     this.separator = separator;
-    createObjectHandlers();
   }
 
   public CsvReader(String fileName, char separator)
     throws FileNotFoundException {
     this.separator = separator;
     createReader(fileName);
-    createObjectHandlers();
   }
 
   private void createReader(String fileName) throws FileNotFoundException {
     reader = new FileReader(fileName);
-  }
-
-  private void createObjectHandlers() {
-    objectHandlers.put(String.class,
-        new DefaultObjectHandlers.StringHandler());
-    objectHandlers.put(Integer.class,
-        new DefaultObjectHandlers.IntHandler());
-    objectHandlers.put(Double.class,
-        new DefaultObjectHandlers.DoubleHandler());
-    objectHandlers.put(Boolean.class,
-        new DefaultObjectHandlers.BooleanHandler());
-    objectHandlers.put(Byte.class,
-        new DefaultObjectHandlers.ByteHandler());
-    objectHandlers.put(Float.class,
-        new DefaultObjectHandlers.FloatHandler());
-    objectHandlers.put(Long.class,
-        new DefaultObjectHandlers.LongHandler());
-    objectHandlers.put(Short.class,
-        new DefaultObjectHandlers.ShortHandler());
-    objectHandlers.put(Character.class,
-        new DefaultObjectHandlers.CharHandler());
   }
 
   public <T> T registerClass(Class<T> cls) {
@@ -101,68 +74,44 @@ public class CsvReader {
     return obj;
   }
 
-  private IntHandler intHandler =
-    new DefaultPrimitiveHandlers.DefaultIntHandler();
-
-  private DoubleHandler doubleHandler =
-    new DefaultPrimitiveHandlers.DefaultDoubleHandler();
-
-  private BooleanHandler booleanHandler =
-    new DefaultPrimitiveHandlers.DefaultBooleanHandler();
-
-  private ByteHandler byteHandler =
-    new DefaultPrimitiveHandlers.DefaultByteHandler();
-
-  private FloatHandler floatHandler =
-    new DefaultPrimitiveHandlers.DefaultFloatHandler();
-
-  private LongHandler longHandler =
-    new DefaultPrimitiveHandlers.DefaultLongHandler();
-
-  private ShortHandler shortHandler =
-    new DefaultPrimitiveHandlers.DefaultShortHandler();
-
-  private CharHandler charHandler =
-    new DefaultPrimitiveHandlers.DefaultCharHandler();
-
   public void setIntHandler(IntHandler intHandler) {
-    this.intHandler = intHandler;
+    typeManeger.setIntHandler(intHandler);
   }
 
   public void setDoubleHandler(DoubleHandler doubleHandler) {
-    this.doubleHandler = doubleHandler;
+    typeManeger.setDoubleHandler(doubleHandler);
   }
 
   public void setBooleanHandler(BooleanHandler booleanHandler) {
-    this.booleanHandler = booleanHandler;
+    typeManeger.setBooleanHandler(booleanHandler);
   }
 
   public void setByteHandler(ByteHandler byteHandler) {
-    this.byteHandler = byteHandler;
+    typeManeger.setByteHandler(byteHandler);
   }
 
   public void setFloatHandler(FloatHandler floatHandler) {
-    this.floatHandler = floatHandler;
+    typeManeger.setFloatHandler(floatHandler);
   }
 
   public void setLongHandler(LongHandler longHandler) {
-    this.longHandler = longHandler;
+    typeManeger.setLongHandler(longHandler);
   }
 
   public void setShortHandler(ShortHandler shortHandler) {
-    this.shortHandler = shortHandler;
+    typeManeger.setShortHandler(shortHandler);
   }
 
   public void setCharHandler(CharHandler charHandler) {
-    this.charHandler = charHandler;
+    typeManeger.setCharHandler(charHandler);
   }
 
   public void setObjectHandler(Class cls, ObjectHandler objectHandler) {
-    objectHandlers.put(cls, objectHandler);
+    typeManeger.setObjectHandler(cls, objectHandler);
   }
     
   private void start() {
-    createFieldHandlers();
+    typeManeger.createFieldHandlers();
     bufferedreader = new BufferedReader(reader);
     readHeader();
     matchRecordsWithHeader();
@@ -234,38 +183,6 @@ public class CsvReader {
     }
   }
 
-  private void createFieldHandlers() {
-    createPrimitiveFieldHandlers();
-    createObjectFieldHandlers();
-  }
-
-  private void createPrimitiveFieldHandlers() {
-    fieldHandlers.put(Integer.TYPE,
-        new PrimitiveHandlers.IntFieldHandler(intHandler));
-    fieldHandlers.put(Double.TYPE,
-        new PrimitiveHandlers.DoubleFieldHandler(doubleHandler));
-    fieldHandlers.put(Boolean.TYPE,
-        new PrimitiveHandlers.BooleanFieldHandler(booleanHandler));
-    fieldHandlers.put(Byte.TYPE,
-        new PrimitiveHandlers.ByteFieldHandler(byteHandler));
-    fieldHandlers.put(Float.TYPE,
-        new PrimitiveHandlers.FloatFieldHandler(floatHandler));
-    fieldHandlers.put(Long.TYPE,
-        new PrimitiveHandlers.LongFieldHandler(longHandler));
-    fieldHandlers.put(Short.TYPE,
-        new PrimitiveHandlers.ShortFieldHandler(shortHandler));
-    fieldHandlers.put(Character.TYPE,
-        new PrimitiveHandlers.CharFieldHandler(charHandler));
-  }
-
-  private void createObjectFieldHandlers() {
-    for (Map.Entry<Class, ObjectHandler> entry : objectHandlers.entrySet()) {
-      Class cls = entry.getKey();
-      ObjectHandler objectHandler = entry.getValue();
-      fieldHandlers.put(cls, new ObjectFieldHandler(objectHandler));
-    }
-  }
-
   private ObjectDescriptor createObjectDescriptor(Object recordObject) {
     ObjectDescriptor objectDescriptor = new ObjectDescriptor();
     Class cls = recordObject.getClass();
@@ -291,7 +208,7 @@ public class CsvReader {
     field.setAccessible(true);
     fieldDescriptor.field = field;
     fieldDescriptor.originalIndex = originalIndex;
-    FieldHandler fieldHandler = createFieldHandler(field.getType());
+    FieldHandler fieldHandler = typeManeger.createFieldHandler(field.getType());
     fieldDescriptor.handler = fieldHandler;
     return fieldDescriptor;
   }
@@ -326,14 +243,6 @@ public class CsvReader {
     }
   }
  
-  private FieldHandler createFieldHandler(Class cls) {
-    if (fieldHandlers.containsKey(cls)) {
-      return fieldHandlers.get(cls);
-    } else {
-      throw new RuntimeException("Not found handler");
-    }
-  }
-
   public boolean hasNext() {
     if (isFirstHasNextOrNext) {
       start();
