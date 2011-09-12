@@ -1,6 +1,6 @@
 package hu.sztaki.ilab.reflecsv;
 
-interface ObjectHandler {
+public interface ObjectHandler {
   public Object convert(String value);
 }
 
