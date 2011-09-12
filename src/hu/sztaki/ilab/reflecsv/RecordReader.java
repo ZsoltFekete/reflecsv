@@ -32,7 +32,8 @@ public class RecordReader <T> {
     List<T> list = new ArrayList<T>();
     csvReader.registerObject(sampleRecord);
     while (csvReader.hasNext()) {
-      T nextRecord = csvReader.getNextRecord();
+      @SuppressWarnings("unchecked")
+      T nextRecord = (T) csvReader.getNextRecord();
       list.add(nextRecord);
     }
     return list;
