@@ -10,11 +10,13 @@ public class ObjectCloner {
     Class<?> cls = t.getClass();
     Field[] fields = cls.getDeclaredFields();
     for (Field field : fields) {
-      field.setAccessible(true);
-      try {
-        field.set(copy, field.get(t));
-      } catch (java.lang.IllegalAccessException e) {
-        e.printStackTrace();
+      if (!field.isSynthetic()) {
+        field.setAccessible(true);
+        try {
+          field.set(copy, field.get(t));
+        } catch (java.lang.IllegalAccessException e) {
+          e.printStackTrace();
+        }
       }
     }
     return copy;

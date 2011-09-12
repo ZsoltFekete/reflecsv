@@ -36,11 +36,12 @@ class ObjectDescriptorCreator {
   private ObjectDescriptor createObjectDescriptor(Object recordObject) {
     ObjectDescriptor objectDescriptor = new ObjectDescriptor();
     Class cls = recordObject.getClass();
-    Field fieldlist[] = cls.getDeclaredFields();
-    for (int i = 0; i < fieldlist.length; i++) {
-      Field field = fieldlist[i];
-      FieldDescriptor fieldDescriptor = createFieldDescriptor(field);
-      objectDescriptor.fields.add(fieldDescriptor);
+    Field fieldList[] = cls.getDeclaredFields();
+    for (Field field : fieldList) {
+      if (!field.isSynthetic()) {
+        FieldDescriptor fieldDescriptor = createFieldDescriptor(field);
+        objectDescriptor.fields.add(fieldDescriptor);
+      }
     }
     return objectDescriptor;
   }
