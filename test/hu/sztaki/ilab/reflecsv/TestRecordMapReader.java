@@ -31,6 +31,18 @@ public class TestRecordMapReader extends TestCase {
     public String field2;
   }
 
+  private static class Record1WithClone {
+    public int field1;
+    public String field2;
+    public Object clone() {
+      Record1WithClone copy = new Record1WithClone();
+      copy.field1 = 5;
+      copy.field2 = new String(field2);
+      return copy;
+    }
+  }
+
+
   public void testRecordMapReader() {
     String inputString =
       "id,field1,field2,field3\n" +
@@ -48,6 +60,25 @@ public class TestRecordMapReader extends TestCase {
     assertEquals(-3, map.get("b").field1);
     assertEquals("asd", map.get("b").field2);
   }
+
+  public void testRecordMapReaderWithClone() {
+    String inputString =
+      "id,field1,field2,field3\n" +
+      "a,1,qwe,3.4\n" +
+      "b,-3,asd,-4.5\n";
+    Reader reader = new StringReader(inputString);
+    RecordMapReader<String, StringIdRecord, Record1WithClone> recordReader =
+      new RecordMapReader<String, StringIdRecord, Record1WithClone>(reader, ',',
+          new StringIdRecord(), new Record1WithClone());
+    Map<String, Record1WithClone> map = recordReader.read();
+    assertNotNull(map);
+    assertEquals(2, map.size());
+    assertEquals(5, map.get("a").field1);
+    assertEquals("qwe", map.get("a").field2);
+    assertEquals(5, map.get("b").field1);
+    assertEquals("asd", map.get("b").field2);
+  }
+
 
   public void testRecordMapReaderDuplicateId() {
     String inputString =

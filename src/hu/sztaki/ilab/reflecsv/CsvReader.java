@@ -110,6 +110,8 @@ public class CsvReader {
         header);
     objectDesciptors = objectDescriptorCreator.createObjectDescriptors();
 
+    createObjectCloners();
+
     createSortedIndicesAndReIndexFieldDescriptors();
 
     readNextLine();
@@ -123,6 +125,13 @@ public class CsvReader {
           "It should contain at leas one line: a header");
     }
     header = Split.split(headerString, separator);
+  }
+
+  private void createObjectCloners() {
+    objectCloners = new ObjectCloner[recordObjects.size()];
+    for (int i = 0; i < recordObjects.size(); ++i) {
+      objectCloners[i] = new ObjectCloner(recordObjects.get(i));
+    }
   }
 
   private void createSortedIndicesAndReIndexFieldDescriptors() {
@@ -148,13 +157,15 @@ public class CsvReader {
     }
   }
 
+  private ObjectCloner[] objectCloners;
+
   public <T> T getNextRecord() {
     next();
     if (0 == recordObjects.size()) {
       return null;
     }
     @SuppressWarnings("unchecked")
-    T result = ObjectCloner.clone((T)recordObjects.get(0));
+    T result = (T) objectCloners[0].getClone();
     return result;
   }
 
@@ -162,8 +173,7 @@ public class CsvReader {
     next();
     Object[] result = new Object[recordObjects.size()];
     for (int i = 0; i < recordObjects.size(); ++i) {
-  //    @SuppressWarnings("unchecked")
-      result[i] = ObjectCloner.clone(recordObjects.get(i));
+      result[i] = objectCloners[i].getClone();
     }
     return result;
   }

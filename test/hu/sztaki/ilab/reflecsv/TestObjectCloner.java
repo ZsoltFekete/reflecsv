@@ -30,7 +30,8 @@ public class TestObjectCloner extends TestCase {
     original.i = 17;
     original.s = "qwe";
 
-    MyObject copy = ObjectCloner.clone(original);
+    ObjectCloner objectCloner = new ObjectCloner(original);
+    MyObject copy = (MyObject) objectCloner.getClone();
 
     assertNotNull(copy);
     assertNotSame(original, copy);
