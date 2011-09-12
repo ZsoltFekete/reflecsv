@@ -43,7 +43,7 @@ public class RecordMapReader <ID, ID_RECORD extends IdRecord<ID>, T> {
   }
 
   public Map<ID, T> read() {
-    CsvReader csvReader = new CsvReader(reader, ',');
+    CsvReader csvReader = new CsvReader(reader, separator);
     Map<ID, T> map = new HashMap<ID, T>();
     csvReader.registerObject(sampleRecord);
     csvReader.registerObject(idRecord);

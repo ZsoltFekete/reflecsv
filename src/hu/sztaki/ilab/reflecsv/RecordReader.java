@@ -28,7 +28,7 @@ public class RecordReader <T> {
   }
 
   public List<T> read() {
-    CsvReader csvReader = new CsvReader(reader, ',');
+    CsvReader csvReader = new CsvReader(reader, separator);
     List<T> list = new ArrayList<T>();
     csvReader.registerObject(sampleRecord);
     while (csvReader.hasNext()) {
