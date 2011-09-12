@@ -161,8 +161,10 @@ public class CsvReader {
 
   public <T> T getNextRecord() {
     next();
-    if (0 == recordObjects.size()) {
-      return null;
+    if (1 != recordObjects.size()) {
+      throw new RuntimeException("To use getNextRecord you must have exactly" +
+          " 1 record registered.\n" +
+          "The number of registered records is: " + recordObjects.size());
     }
     @SuppressWarnings("unchecked")
     T result = (T) objectCloners[0].getClone();
